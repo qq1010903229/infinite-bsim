@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Infinite Button Simulator</title>
+
+        <meta charset="utf-8">
+        
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/lib/OmegaNum.js"></script>
+        <script src="js/format.js"></script>
+
+        <script src="js/tabs.js"></script>
+        <script src="js/tabs/runes.js"></script>
+        <script src="js/tabs/sigils.js"></script>
+        <script src="js/tabs/tokens.js"></script>
+        <script src="js/tabs/automation.js"></script>
+        <script src="js/tabs/milestones.js"></script>
+        <script src="js/tabs/buttons.js"></script>
+
+        <script src="js/overlays.js"></script>
+        <script src="js/overlays/stats.js"></script>
+        <script src="js/overlays/options.js"></script>
+        <script src="js/overlays/save.js"></script>
+        <script src="js/overlays/popup.js"></script>
+        
+        <script src="js/data/runes.js"></script>
+        <script src="js/data/sigils.js"></script>
+        <script src="js/data/tokens.js"></script>
+        <script src="js/data/automation.js"></script>
+        <script src="js/data/milestones.js"></script>
+        <script src="js/data/buttons.js"></script>
+
+        <script src="js/temp.js"></script>
+        <script src="js/save.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/main.js"></script>
+    </head>
+    <body onload="init()">
+        <div id="tabs">
+        </div>
+        <div id="container" class="button-row-group"></div>
+    </body>
+    <svg class="filter-effects" width="0" height="0" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <filter id="crispify">
+                <feComponentTransfer>
+                    <feFuncA type="discrete" tableValues="0 0 0 0 0 0 1 1 1 1 1"/>
+                </feComponentTransfer>
+            </filter>
+        </defs>
+    </svg>
+</html>
