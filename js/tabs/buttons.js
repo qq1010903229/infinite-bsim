@@ -108,7 +108,7 @@ tabs.buttons = {
                 let button = row.items[b];
                 button.tier = D.add(offset, b);
                 let cost = getButtonCost(data.tier, button.tier);
-				if (a == 1 && D(data.tier) >= 2)cost = getMultiReqForCollapse(data.tier, getButtonCost(data.tier, button.tier));
+				if (a == 1 && D(data.tier) >= 2)cost = getMultiReqForCollapse(data.tier, getButtonCost(data.tier, button.tier), getButtonCost(data.tier, button.tier));
                 if (needsUpdate) {
                     button.gain.textContent = "+" + format(getButtonGain(data.tier, button.tier).mul(row.multi)) + " " + name;
                     button.cost.textContent = (a == 0 ? "−" : "≥") + format(cost) + " " + prevName;
