@@ -96,8 +96,7 @@ tabs.buttons = {
                 button.cost = cost;
             }
 
-            if (game.unlocks.btn5 && !(a == 1 && D(data.tier) >= 2)) data.level = getHighestButton(data.tier, a == 0 ? game.money : game.ladder[a - 1].amount).max(data.level);
-			if (game.unlocks.btn5 && a == 1 && D(data.tier) >= 2) data.level = getHighestButton1(data.tier, a == 0 ? game.money : game.ladder[a - 1].amount).max(data.level);
+            if (game.unlocks.btn5) data.level = getHighestButton(data.tier, a == 0 ? game.money : game.ladder[a - 1].amount).max(data.level);
             let offset = D.sub(data.level, 6).max(0);
             let multi = getRowMulti(data.tier);
             let needsUpdate = allDirty || D.neq(multi, row.multi) || D.neq(row.items[0]?.tier ?? -1, offset);
@@ -108,8 +107,7 @@ tabs.buttons = {
                 let button = row.items[b];
                 button.tier = D.add(offset, b);
                 let cost = getButtonCost(data.tier, button.tier);
-				if (a == 1 && D(data.tier) >= 2)cost = getMultiReqForCollapse(data.tier, getButtonCost(data.tier, button.tier), getButtonCost(data.tier, button.tier));
-                if (needsUpdate) {
+				if (needsUpdate) {
                     button.gain.textContent = "+" + format(getButtonGain(data.tier, button.tier).mul(row.multi)) + " " + name;
                     button.cost.textContent = (a == 0 ? "−" : "≥") + format(cost) + " " + prevName;
                     if (game.unlocks.btn6) button.setAttribute("mark", "#" + format(button.tier.add(1)));

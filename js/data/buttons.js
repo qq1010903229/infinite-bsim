@@ -196,13 +196,6 @@ let unlocks = {
         conDisplay: () => "Skill level ≥" + format(200) + "",
         execute: () => { updateTabVisibility(); },
     },
-    "col2": {
-        requires: ["col1"],
-        desc: () => "Improve Collapse",
-        condition: () => D.gte(game.money, D('1e600')),
-        conDisplay: () => "−" + format('1e600') + " Money",
-        execute: () => { game.money = D.sub(game.money, '1e600'); },
-    },
 }
 let visibleUnlocks = [];
 
@@ -246,20 +239,6 @@ function clickButton(row, tier, auto = false) {
             if (!auto && game.unlocks.tok1 && Math.random() * 100 <= temp.tokenUpgEffects.tokens.normalChance)
                 game.tokens = D.add(row, 1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).add(game.tokens);
             if (!auto) game.stats.presses++;
-        }
-    } else if (index == 1 && D(row).gte(2)) {
-		cost = getMultiReqForCollapse(row, getButtonCost(row, tier), cost);
-        let prevData = game.ladder[index - 1];
-        if (D.gte(prevData.amount, cost)) {
-            game.money = 0;
-            for (let a = 0; a < index; a++) game.ladder[a].amount = game.ladder[a].level = D(0);
-            data.amount = getButtonGain(row, tier).mul(getRowMulti(row)).add(data.amount);
-            data.level = D(0);
-            data.presses = D.add(data.presses, 1);
-            if (!auto && game.unlocks.tok1 && Math.random() * 100 <= temp.tokenUpgEffects.tokens.normalChance)
-                game.tokens = D.add(row, 1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).add(game.tokens);
-            if (!auto) game.stats.presses++;
-            if (game.unlocks.btn5) makeRow(row);
         }
     } else {
         let prevData = game.ladder[index - 1];
@@ -365,7 +344,6 @@ function doResetAuto(times) {
         for (let a = (game.automators.reset?.depth ?? 1); a >= 1; a--) {
             let row = game.ladder[a];
             let pos = getHighestButton(row.tier, game.ladder[a - 1].amount);
-			if(a == 1 && D(row.tier) >= 2)pos = getHighestButton1(row.tier, game.ladder[a - 1].amount);
             if (D.lt(pos, 0)) continue;
             let gain = getButtonGain(row.tier, pos).mul(getRowMulti(row.tier));
             if (D.div(gain, row.amount).gt(game.automators.reset?.factor ?? 0)) {
@@ -384,13 +362,13 @@ function getHighestButtonForCollapse(row, amount){
     return D.div(D(amount).max(0), base).add(1).logBase(D.add(row, 1).mul(10)).div(10).add(1).logBase(1.1);
 }
 
-function getMultiReqForCollapse(row, amount, orig){
+/* function getMultiReqForCollapse(row, amount, orig){
 	if(game.unlocks.col2)return orig;
 	amount = amount.div(getRowMulti(row)).div(temp.sigilEffects[0]);
     let tier = getButtonTierForCollapse(row, amount);
 	if(D(row).gte(2))return getMultiReqForCollapse(D(row).sub(1), getButtonCostForCollapse(row, tier), orig);
     return getButtonCostForCollapse(row, tier).max(orig);
-}
+} */
 
 function getButtonTierForCollapse(row, amount) {
     let base = D.eq(row, 0) ? 8 : 4;
@@ -412,14 +390,4 @@ function getCollapseMult() {
 		}
 	}
 	return mult;
-}
-
-function getHighestButton1(row, amount){
-	if(game.unlocks.col2)return getHighestButton(row, amount);
-	let a = -1;
-	while(true){
-		if(getMultiReqForCollapse(row, getButtonCost(row, a), getButtonCost(row, a)).gte(amount))break;
-		a++;
-	}
-	return D(a-1);
 }
