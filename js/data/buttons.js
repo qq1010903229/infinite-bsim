@@ -268,7 +268,7 @@ function makeRow(row) {
         game.ladder.push(highest);
     }
 	if(D.lte(highest.tier, row) && game.ladder.length == 10 && game.unlocks.col1){
-		if(game.collapsed.gte(5) && !game.unlocks.col2)return;
+		//if(game.collapsed.gte(5) && !game.unlocks.col2)return;
 		game.collapsed = game.collapsed.add(1);
 		for(let i = 2;i < 10; i++){
 			game.ladder[i-1]=game.ladder[i];
