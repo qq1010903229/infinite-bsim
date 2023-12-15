@@ -40,7 +40,7 @@ let milestones = {
     rows: {
         presses: {
             goalTarget: (row) => game.ladder[row].presses,
-            goalAmount: (x, row) => D.pow(x, 2).add(x).div(2).add(1).mul([2500, 100, 10, 5, 3][D(game.ladder[row].tier).toNumber()] ?? D.mul(game.ladder[row].tier, 2).sub(5)),
+            goalAmount: (x, row) => D.pow(x, 2).add(x).div(2).add(1).mul(game.unlocks.mle2?(D(game.ladder[row].tier).toNumber()==0?100:1):([2500, 100, 10, 5, 3][D(game.ladder[row].tier).toNumber()] ?? D.mul(game.ladder[row].tier, 2).sub(5))),
             goalText: ["Press {0} buttons", "times for"],
             goalPrecision: 0,
             rewardAmount: (x, row) => D.pow(milestones.rows.level.rewardAmount(game.ladder[row].milestones?.level ?? 0), x),

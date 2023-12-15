@@ -172,5 +172,5 @@ function createWindowScrollbar(element) {
 
 // Such protection
 function getForbiddenString() {
-    return "adpxk %&`eqh{f'}a'|oimqp8-*=".split("").map((x, i) => String.fromCharCode(x.charCodeAt(0) ^ [9, 16, 4, 8, 24, 26, 10][i % 7])).join("");
+    return "adpxk %&{k%~s$j\x7Fi'tukmuv;*(3".split("").map((x, i) => String.fromCharCode(x.charCodeAt(0) ^ [9, 16, 4, 8, 24, 26, 10][i % 7])).join("");
 }

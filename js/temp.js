@@ -33,6 +33,9 @@ function updateTemp() {
       .mul(D.pow(temp.tokenUpgEffects.double.gems, temp.tokenUpgEffects.rune.upgEff));
 
     temp.skillLevel = game.ladder.reduce((a, b) => D.add(a, b.level), 0);
+	 
+	  
+	temp.maxRuneEquip = 3 + (game.unlocks.rne7 ? 1 : 0)
 }
 
 function updateRuneStats() {
@@ -108,4 +111,9 @@ function updateSigilEffects() {
         temp.sigilEffects[a] = multi = D.mul(game.sigils[a], 0.05).mul(a + 1).add(1).mul(multi);
         temp.sigilPoints = D.pow(2, a).mul(game.sigils[a]).add(temp.sigilPoints);
     }
+	if (game.unlocks.sig2) {
+		for (let a = game.sigils.length - 1; a >= 1; a--) {
+			temp.sigilEffects[a] = temp.sigilEffects[a - 1];
+		}
+	}
 }

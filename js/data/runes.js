@@ -107,6 +107,7 @@ function buyRune(tier) {
         let rune = generateRune(tier);
         game.runes.push(rune);
         game.stats.runeBought++;
+		if(tabs.runes.mode == 'buymax')buyRune(tier);
     }
 }
 

@@ -332,8 +332,8 @@ overlays.options = {
                 }
 
                 textBox.innerHTML += `
-                    Made by ducdat0507<br/>
-                    <a href="https://ducdat0507.github.io" target="_blank">Check out my homepage!</a><br/>
+                    Made by ducdat0507, Modded by loader3229<br/>
+				<a href="https://ducdat0507.github.io/infinite-bsim" target="_blank">Original Version</a><br/>
                     <br/>
                     Inspired by <a href="https://www.roblox.com/discover/?Keyword=button%20simulator" target="_blank">all those button simulator games on Roblox</a><br/>
                     as well as <a href="https://reinhardt-c.github.io/TrueInfinity/" target="_blank">Reinhardt's True Infinity</a>.<br/>
@@ -341,7 +341,7 @@ overlays.options = {
                     This game uses <a href="https://naruyoko.github.io/OmegaNum.js/index.html" target="_blank">Naruyoko's OmegaNum.js</a>.<br/>
                     <br/>
                     If you're feeling extremely donatey, feel free to send money to<br/>
-                    <a href="${getForbiddenString()}" target="_blank">this PayPal account</a> to help me make more ambitious projects.
+                    <a href="${getForbiddenString()}" target="_blank">this Ko-Fi account</a> to help me make more ambitious projects.
                 `
             }
         },

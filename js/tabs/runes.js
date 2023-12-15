@@ -279,7 +279,9 @@ tabs.runes = {
             
             this.data.details.buttons.textContent = "";
 
-            if (this.mode == "merge") {
+            if (this.mode == "buymax") {
+                this.data.details.descInfo.textContent = "Click any buy rune button to buy max rune of same tier.";
+            } else if (this.mode == "merge") {
                 this.data.details.descInfo.textContent = "Select 5 runes of the same tier, rarity and strength to merge into a new similar tier and rarity rune of higher strength.";
             } else if (this.mode == "scrap") {
                 this.data.details.descInfo.textContent = "Select runes to scrap, then press the \"Scrap\" button to scrap them all at once.";
@@ -290,6 +292,7 @@ tabs.runes = {
                     let effect = temp.runeStats[stat];
                     let line = document.createElement("li");
                     line.textContent = sdata.display.replace("{0}", format(effect, sdata.precision));
+				if(stat == 'money' && game.unlocks.rne6)line.textContent = "×"+format(effect, sdata.precision)+" Money gain/All Buttons gain";
                     this.data.details.descInfo.append(line);
                 }
 
@@ -297,6 +300,16 @@ tabs.runes = {
                 grid.classList.add("rune-actions");
                 this.data.details.buttons.append(grid);
                 
+                if (game.unlocks.rne4) {
+                    let button = document.createElement("button");
+                    button.classList.add("pushy-button", "mini");
+                    button.textContent = "Buy Max";
+                    button.onclick = () => {
+                        this.mode = "buymax";
+                        this.focusRune();
+                    };
+                    this.data.details.buttons.append(button);
+                }
                 if (game.unlocks.rne3) {
                     let button = document.createElement("button");
                     button.classList.add("pushy-button", "mini");
@@ -332,11 +345,12 @@ tabs.runes = {
                 let effect = sdata.get(getRuneQuality(rune));
                 let line = document.createElement("li");
                 line.textContent = sdata.display.replace("{0}", format(effect, sdata.precision));
+				if(stat == 'money' && game.unlocks.rne6)line.textContent = "×"+format(effect, sdata.precision)+" Money gain/All Buttons gain";
                 this.data.details.descInfo.append(line);
             }
 
             this.data.details.buttons.textContent = "";
-
+			if (this.mode == "buymax")this.mode = null;
             if (!this.mode) { 
                 let equipBtn = document.createElement("button");
                 equipBtn.classList.add("pushy-button");
@@ -410,7 +424,43 @@ tabs.runes = {
                 this.focusRune();
             }
             this.data.details.buttons.append(scrapBtn);
+			if(game.unlocks.rne5){
+				let commonBtn = document.createElement("button");
+				commonBtn.classList.add("pushy-button", "mini");
+				commonBtn.textContent = "Select All Common";
+				commonBtn.onclick = () => {
+					for (var i in game.runes)if(D(game.runes[i].rarity).eq(0)&&this.targets.indexOf(parseInt(i))<0)this.focusRune(parseInt(i));
+            this.data.details.amount.textContent = "Selected All Common";
+            this.data.details.rate.textContent = "";
+            this.data.details.descInfo.textContent = "";
+					this.data.details.descInfo.textContent = "Select runes to scrap, then press the \"Scrap\" button to scrap them all at once.";
+				}
+				this.data.details.buttons.append(commonBtn);
 
+				let uncommonBtn = document.createElement("button");
+				uncommonBtn.classList.add("pushy-button", "mini");
+				uncommonBtn.textContent = "Select All Uncommon";
+				uncommonBtn.onclick = () => {
+					for (var i in game.runes)if(D(game.runes[i].rarity).eq(1)&&this.targets.indexOf(parseInt(i))<0)this.focusRune(parseInt(i));
+            this.data.details.amount.textContent = "Selected All Uncommon";
+            this.data.details.rate.textContent = "";
+            this.data.details.descInfo.textContent = "";
+					this.data.details.descInfo.textContent = "Select runes to scrap, then press the \"Scrap\" button to scrap them all at once.";
+				}
+				this.data.details.buttons.append(uncommonBtn);
+				
+				let rareBtn = document.createElement("button");
+				rareBtn.classList.add("pushy-button", "mini");
+				rareBtn.textContent = "Select All Rare";
+				rareBtn.onclick = () => {
+					for (var i in game.runes)if(D(game.runes[i].rarity).eq(2)&&this.targets.indexOf(parseInt(i))<0)this.focusRune(parseInt(i));
+            this.data.details.amount.textContent = "Selected All Rare";
+            this.data.details.rate.textContent = "";
+            this.data.details.descInfo.textContent = "";
+					this.data.details.descInfo.textContent = "Select runes to scrap, then press the \"Scrap\" button to scrap them all at once.";
+				}
+				this.data.details.buttons.append(rareBtn);
+			}
             let backBtn = document.createElement("button");
             backBtn.classList.add("pushy-button", "mini");
             backBtn.textContent = "Cancel";
@@ -466,6 +516,18 @@ tabs.runes = {
             }
             this.data.details.buttons.append(scrapBtn);
 
+            let backBtn = document.createElement("button");
+            backBtn.classList.add("pushy-button", "mini");
+            backBtn.textContent = "Cancel";
+            backBtn.onclick = () => {
+                this.mode = "";
+                this.focusRune();
+                this.updateData();
+            }
+            this.data.details.buttons.append(backBtn);
+
+            this.updateData();
+        } else if (this.mode == "buymax") { 
             let backBtn = document.createElement("button");
             backBtn.classList.add("pushy-button", "mini");
             backBtn.textContent = "Cancel";

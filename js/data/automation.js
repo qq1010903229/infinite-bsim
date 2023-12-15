@@ -184,6 +184,228 @@ let automators = {
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
         fire: (x) => forgeSigil(0, x),
     },
+    scrap: {
+        title: "Rune Buy-Scrap Automator",
+        requires: "atm6",
+        levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(10, x)).mul(1e10),
+        speed: (x) => D.add(x, 1).mul(100),
+        speedPrecision: 0,
+        consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1)
+            .mul(game.automators.scrap.tier ?? 1),
+        fire: function(x){
+			let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, (game.automators.scrap.tier ?? 1) - 1))
+			let cost = getRuneCost((game.automators.scrap.tier ?? 1) - 1);
+			let count = game.gems.div(cost).floor().min(x)
+			game.scraps = D.add(game.scraps,count.mul(gain))
+			game.gems = D.sub(game.gems,count.mul(cost))
+		},
+        configs: {
+            tierCost: (x) => D.pow(100, D.pow(x, 2).add(x).div(2)).mul(1e12),
+            upgradeTier() {
+                let data = automators.scrap;
+                let level = game.automators.scrap?.maxTier ?? 0;
+                let cost = this.tierCost(level);
+                if (D.gte(game.charge, cost)) {
+                    game.charge = D.sub(game.charge, cost);
+                    if (!game.automators.scrap) game.automators.scrap = {};
+                    game.automators.scrap.maxTier = (game.automators.scrap.maxTier ?? 0) + 1;
+                    if (game.automators.scrap.tier ?? 1 >= level) {
+                        game.automators.scrap.tier = (game.automators.scrap.tier ?? 1) + 1;
+                        updateAutomationStats();
+                    }
+                }
+            },
+            start(parent) {
+                {
+                    let container = document.createElement("div");
+                    container.classList.add("sub-item");
+                    parent.append(container);
+                    parent.tier = container;
+
+                    let info = document.createElement("div");
+                    container.append(info);
+                    container.infoBox = info;
+
+                    let title = document.createElement("b");
+                    title.textContent = "Selected rune tier";
+                    info.append(title);
+                    container.titleBox = title;
+
+                    let rateBox = document.createElement("div");
+                    rateBox.classList.add("rate-box");
+                    info.append(rateBox);
+                    container.rateBox = rateBox;
+
+                    let speed = document.createElement("div");
+                    rateBox.append(speed);
+                    container.speed = speed;
+
+                    let consumption = document.createElement("div");
+                    rateBox.append(consumption);
+                    container.consumption = consumption;
+
+                    let slider = document.createElement("input");
+                    slider.type = "range";
+                    slider.min = 1;
+                    slider.oninput = ev => {
+                        let data = game.automators.scrap;
+                        if (!data) data = game.automators.scrap = {};
+                        data.tier = Math.max(Math.min(slider.value, (data.maxTier ?? 0) + 1), 1);
+                        updateAutomationStats();
+                    }
+                    info.append(slider);
+                    container.slider = slider;
+                    
+                    let upgBtn = document.createElement("button");
+                    upgBtn.classList.add("pushy-button");
+                    upgBtn.tabIndex = -1;
+                    upgBtn.onclick = ev => {
+                        this.upgradeTier();
+                        let level = game.automators.scrap?.maxTier ?? 0;
+                        upgBtn.disabled = D.lt(game.charge, this.tierCost(level));
+                        upgBtn.blur();
+                    }
+                    container.append(upgBtn);
+                    container.button = upgBtn;
+
+                    let effect = document.createElement("div");
+                    effect.textContent = "Upgrade";
+                    upgBtn.append(effect);
+                    container.effect = effect;
+
+                    let cost = document.createElement("div");
+                    upgBtn.append(cost);
+                    container.cost = cost;
+                }
+                {
+                    let container = document.createElement("div");
+                    container.classList.add("config-item");
+                    parent.append(container);
+                    parent.factor = container;
+					
+                    let title = document.createElement("div");
+                    title.textContent = "This automator will buy Common rune of selected tier and immediately scrap it.";
+                    container.append(title);
+                    container.nameBox = title;
+                }
+            },
+            update(parent) {
+                let tier = game.automators.scrap?.tier ?? 1;
+                let maxtier = game.automators.scrap?.maxTier ?? 0;
+                
+                let tierCost = this.tierCost(maxtier);
+
+                parent.tier.speed.textContent = "Tier " + format.comma(tier);
+                parent.tier.consumption.textContent = "×" + format.comma(tier) + " consumption";
+
+                parent.tier.slider.max = maxtier + 1;
+                parent.tier.slider.value = tier;
+                
+                parent.tier.button.disabled = maxtier >= 4 || D.lt(game.charge, tierCost);
+                parent.tier.cost.textContent = maxtier >= 4 ? "Maxed out" : "−" + format(tierCost) + " Charge";
+            },
+        }
+    },
+    milestone: {
+        title: "Milestone Automator",
+        requires: "atm7",
+        levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(10, x)).mul(1e15),
+        speed: (x) => D.add(x, 1),
+        speedPrecision: 0,
+        consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
+        fire: function(x){
+			for(let i=0;i<x;i++){
+				for(let j in milestones.global)clickGlobalMilestone(j);
+			}
+			for(let i=0;i<x;i++){
+				for(let j in milestones.rows)for(let k in game.ladder)clickRowMilestone(k,j);
+			}
+		},
+    },
+    scrap_r: {
+        title: "Autoscrapper",
+        requires: "atm8",
+        levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(10, x)).mul(1e18),
+        speed: (x) => D.add(x, 1),
+        speedPrecision: 0,
+        consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
+        fire: function(x){
+			for(let i=0;i<game.runes.length;i++){
+				if(D(game.runes[i].rarity).lte((game.automators.scrap_r?.tier ?? 0))){
+					game.scraps = D.add(game.scraps, getRuneScraps(game.runes[i]));
+                    game.runes.splice(i, 1);
+					i--;
+                    updateRuneStats();
+                    if(currentTab=='runes')tabs.runes.focusRune();
+				}
+			}
+		},
+        configs: {
+            start(parent) {
+                {
+                    let container = document.createElement("div");
+                    container.classList.add("sub-item");
+                    parent.append(container);
+                    parent.tier = container;
+
+                    let info = document.createElement("div");
+                    container.append(info);
+                    container.infoBox = info;
+
+                    let title = document.createElement("b");
+                    title.textContent = "Selected max rarity";
+                    info.append(title);
+                    container.titleBox = title;
+
+                    let rateBox = document.createElement("div");
+                    rateBox.classList.add("rate-box");
+                    info.append(rateBox);
+                    container.rateBox = rateBox;
+
+                    let speed = document.createElement("div");
+                    rateBox.append(speed);
+                    container.speed = speed;
+
+                    let consumption = document.createElement("div");
+                    rateBox.append(consumption);
+                    container.consumption = consumption;
+
+                    let slider = document.createElement("input");
+                    slider.type = "range";
+                    slider.min = 0;
+                    slider.max = 4;
+                    slider.oninput = ev => {
+                        let data = game.automators.scrap_r;
+                        if (!data) data = game.automators.scrap_r = {};
+                        data.tier = Math.max(Math.min(slider.value, 4), 0);
+                        updateAutomationStats();
+                    }
+                    info.append(slider);
+                    container.slider = slider;
+                }
+                {
+                    let container = document.createElement("div");
+                    container.classList.add("config-item");
+                    parent.append(container);
+                    parent.factor = container;
+					
+                    let title = document.createElement("div");
+                    title.textContent = "This automator will scrap runes which rarity is less or equal to selected rarity.";
+                    container.append(title);
+                    container.nameBox = title;
+                }
+            },
+            update(parent) {
+                let tier = game.automators.scrap_r?.tier ?? 0;
+				
+                parent.tier.speed.textContent = rarityNames[tier];
+                parent.tier.consumption.textContent = "×1 consumption";
+
+                parent.tier.slider.max = 4;
+                parent.tier.slider.value = tier;
+            },
+        }
+    },
 }
 
 function doChargerDrag(delta, dTime) {

@@ -196,6 +196,83 @@ let unlocks = {
         conDisplay: () => "Skill level ≥" + format(200) + "",
         execute: () => { updateTabVisibility(); },
     },
+    "rne4": {
+        requires: ["col1"],
+        desc: () => "Unlock Rune Buy Max",
+        condition: () => D.gte(game.money, '1e600'),
+        conDisplay: () => "≥" + format('1e600') + " Money",
+        execute: () => { updateTabVisibility(); },
+    },
+    "rne5": {
+        requires: ["rne4"],
+        desc: () => "Unlock Filtered Scrap",
+        condition: () => D.gte(game.money, '1e750'),
+        conDisplay: () => "≥" + format('1e750') + " Money",
+        execute: () => { updateTabVisibility(); },
+    },
+    "tok4": {
+        requires: ["col1"],
+        desc: () => "Auto-click can gain Tokens",
+        condition: () => D.gte(game.money, '1e700'),
+        conDisplay: () => "≥" + format('1e700') + " Money",
+        execute: () => { updateTabVisibility(); },
+    },
+    "atm6": {
+        requires: ["col1"],
+        desc: () => "Unlock Rune Buy-Scrap Automator",
+        condition: () => D.gte(game.money, '1e800'),
+        conDisplay: () => "≥" + format('1e800') + " Money",
+        execute: () => { updateTabVisibility(); },
+    },
+    "rne6": {
+        requires: ["rne5"],
+        desc: () => "Runes Boost All Buttons",
+        condition: () => D.gte(game.money, '1e1000'),
+        conDisplay: () => "≥" + format('1e1000') + " Money",
+        execute: () => { updateTabVisibility(); },
+    },
+    "mle2": {
+        requires: ["col1"],
+        desc: () => "Improved Milestone",
+        condition: () => D.gte(game.money, '1e1500'),
+        conDisplay: () => "≥" + format('1e1500') + " Money",
+        execute: () => { updateTabVisibility(); },
+    },
+    "atm7": {
+        requires: ["mle2","atm6"],
+        desc: () => "Unlock Milestone Automator",
+        condition: () => D.gte(game.money, '1e2000'),
+        conDisplay: () => "≥" + format('1e2000') + " Money",
+        execute: () => { updateTabVisibility(); },
+    },
+    "rne7": {
+        requires: ["rne6"],
+        desc: () => "Unlock 4th Rune Equipment Slot",
+        condition: () => D.gte(game.scraps, 1e10),
+        conDisplay: () => "−" + format(1e10) + " Glyphs",
+        execute: () => { game.scraps = D.sub(game.scraps, 1e10); },
+    },
+    "sig2": {
+        requires: ["col1"],
+        desc: () => "Sigil-Shift I",
+        condition: () => D.gte(game.money, '1e2500'),
+        conDisplay: () => "≥" + format('1e2500') + " Money",
+        execute: () => { while (game.sigils.length <= 9) game.sigils.push(D(0)); },
+    },
+    "atm8": {
+        requires: ["rne5","atm7"],
+        desc: () => "Unlock Autoscrapper",
+        condition: () => D.gte(game.money, '1e3000'),
+        conDisplay: () => "≥" + format('1e3000') + " Money",
+        execute: () => { updateTabVisibility(); },
+    },
+    "col2": {
+        requires: ["tok4", "sig2", "atm8", "mle2", "rne7"],
+        desc: () => "Unlock Collapse Boost",
+        condition: () => D.gte(game.collapsed,50),
+        conDisplay: () => "≥" + format(50) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
 }
 let visibleUnlocks = [];
 
@@ -211,8 +288,8 @@ function getButtonGain(row, tier) {
 function getRowMulti(row, index) {
     index ??= game.ladder.findIndex(x => D.eq(x.tier, row));
 	if(index < 0)return D.add(getRowAmount(D.add(row, 1)), 1)
-	if(index == 0)return D.add(getRowAmount(D.add(row, 1)), 1).mul(temp.milestoneMultis[index] ?? 1).mul(temp.sigilEffects[index] ?? 1).mul(getCollapseMult());
-    return D.add(getRowAmount(D.add(row, 1)), 1).mul(temp.milestoneMultis[index] ?? 1).mul(temp.sigilEffects[index] ?? 1);
+	if(index == 0)return D.add(getRowAmount(D.add(row, 1)), 1).mul(temp.milestoneMultis[index] ?? 1).mul(temp.sigilEffects[index] ?? 1).mul(game.unlocks.rne6?(temp.runeStats.money ?? 1):1).mul(getCollapseMult());
+    return D.add(getRowAmount(D.add(row, 1)), 1).mul(temp.milestoneMultis[index] ?? 1).mul(game.unlocks.rne6?(temp.runeStats.money ?? 1):1).mul(temp.sigilEffects[index] ?? 1);
 }
 function getButtonCost(row, tier) {
     let base = D.eq(row, 0) ? 5 : D.eq(row, 1) ? 1e5 : D.pow(2, row).mul(250);
@@ -236,7 +313,7 @@ function clickButton(row, tier, auto = false) {
             game.money = D.sub(game.money, cost);
             data.amount = getButtonGain(row, tier).mul(getRowMulti(row, index)).add(data.amount);
             data.presses = D.add(data.presses, 1);
-            if (!auto && game.unlocks.tok1 && Math.random() * 100 <= temp.tokenUpgEffects.tokens.normalChance)
+            if ((!auto || game.unlocks.tok4) && game.unlocks.tok1 && Math.random() * 100 <= temp.tokenUpgEffects.tokens.normalChance)
                 game.tokens = D.add(row, 1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).add(game.tokens);
             if (!auto) game.stats.presses++;
         }
@@ -248,7 +325,7 @@ function clickButton(row, tier, auto = false) {
             data.amount = getButtonGain(row, tier).mul(getRowMulti(row)).add(data.amount);
             data.level = D(0);
             data.presses = D.add(data.presses, 1);
-            if (!auto && game.unlocks.tok1 && Math.random() * 100 <= temp.tokenUpgEffects.tokens.normalChance)
+            if ((!auto || game.unlocks.tok4) && game.unlocks.tok1 && Math.random() * 100 <= temp.tokenUpgEffects.tokens.normalChance)
                 game.tokens = D.add(row, 1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).add(game.tokens);
             if (!auto) game.stats.presses++;
             if (game.unlocks.btn5) makeRow(row);
@@ -314,8 +391,8 @@ function checkEndgame() {
     desc.innerHTML = `
         You've purchased all the available unlocks currently in the game!<br/>
         However, it is not the end of the journey...<br/>
-        Collapse is just implemented by loader3229, make sure to stay tuned for future game updates!<br/>
-        To collapse the first reset layer, you need to reset Hyperity once after unlocking collapse.<br/>
+        Collapse Boost is not implemented, make sure to stay tuned for future game updates!<br/>
+        <br/>
         Time played: <b>${format.time(game.stats.timePlayed)}</b><br/>
     `
     showOverlay("popup", "Congratulations!", desc, ["Ok"]);
@@ -332,6 +409,7 @@ function doMultiAuto(times) {
         game.money = D.sub(game.money, D.mul(cost, presses));
         row.amount = D.add(row.amount, D.mul(gain, presses).mul(getRowMulti(row.tier)));
         row.presses = D.add(row.presses, presses);
+	    if (game.unlocks.tok4)game.tokens = getTokenMulti().mul(presses).mul(temp.tokenUpgEffects.tokens.normalChance/100).add(game.tokens);
         times = D.sub(times, presses);
         pos = D.sub(pos, 1);
     }
@@ -385,7 +463,7 @@ function getCollapseMult() {
 	let m = game.ladder[0].amount, mult = D(1);
     if(game.collapsed.gte(1)){
 		for(let i = 1;i <= game.collapsed.toNumber();i++){
-			m = getButtonGain(i, getHighestButtonForCollapse(i, m)).mul(getRowMulti(i)).mul(temp.sigilEffects[0]);
+			m = getButtonGain(i, getHighestButtonForCollapse(i, m)).mul(getRowMulti(i)).mul(temp.sigilEffects[0]).mul(game.unlocks.rne6?(temp.runeStats.money ?? 1):1);
 			mult = mult.mul(m);
 		}
 	}
