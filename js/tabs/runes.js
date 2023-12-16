@@ -161,7 +161,7 @@ tabs.runes = {
         
         for (let b = 0; b < 8; b++) {
             let button = this.data.gem.items[b];
-            button.tier = D.add(0, b);
+            button.tier = D.add(temp.runeTierShift, b);
             button.gain.textContent = "+Tier " + format(D.add(1, button.tier)) + " Rune";
             let cost = getRuneCost(button.tier);
             button.cost.innerText = "−" + format(cost) + " Gems";
@@ -172,7 +172,7 @@ tabs.runes = {
         button.index = index;
         button.namediv.textContent = "Tier " + format(D.add(1, rune.tier)) + " Rune";
         button.tier.textContent = (D.lt(rune.rarity, rarityNames.length) ? rarityNames[D(rune.rarity).toNumber()] : rarityNames[rarityNames.length - 1] + " +" + format(D.sub(rune.rarity, rarityNames.length).add(1)));
-        if (D.gt(rune.level, 0)) button.tier.textContent += " | " + (D.lt(rune.rarity, runeLevelNames.length) ? runeLevelNames[D(rune.level).toNumber() - 1] : "+" + format(rune.level));
+        if (D.gt(rune.level, 0)) button.tier.textContent += " | " + (D.lte(rune.level, runeLevelNames.length) ? runeLevelNames[D(rune.level).toNumber() - 1] : "+" + format(rune.level));
         button.style.setProperty("--background", D.lt(rune.rarity, rarityColors.length) ? rarityColors[D(rune.rarity).toNumber()] : "#f45");
         let selected = this.targets.includes(index);
         button.classList.toggle("selected", selected);
@@ -455,6 +455,17 @@ tabs.runes = {
 				rareBtn.onclick = () => {
 					for (var i in game.runes)if(D(game.runes[i].rarity).eq(2)&&this.targets.indexOf(parseInt(i))<0)this.focusRune(parseInt(i));
             this.data.details.amount.textContent = "Selected All Rare";
+            this.data.details.rate.textContent = "";
+            this.data.details.descInfo.textContent = "";
+					this.data.details.descInfo.textContent = "Select runes to scrap, then press the \"Scrap\" button to scrap them all at once.";
+				}
+				this.data.details.buttons.append(rareBtn);
+				rareBtn = document.createElement("button");
+				rareBtn.classList.add("pushy-button", "mini");
+				rareBtn.textContent = "Select All";
+				rareBtn.onclick = () => {
+					for (var i in game.runes)if(this.targets.indexOf(parseInt(i))<0)this.focusRune(parseInt(i));
+            this.data.details.amount.textContent = "Selected All Runes";
             this.data.details.rate.textContent = "";
             this.data.details.descInfo.textContent = "";
 					this.data.details.descInfo.textContent = "Select runes to scrap, then press the \"Scrap\" button to scrap them all at once.";

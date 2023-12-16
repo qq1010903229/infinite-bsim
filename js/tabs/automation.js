@@ -235,6 +235,16 @@ tabs.automation = {
                 let upgrade = chargerUpgrades[button.target];
                 let level = game.chargerUpg[button.target] ?? 0;
                 let cost = upgrade.costAmount(level);
+			if(D(level).gte(upgrade.maxAmount)){
+				button.disabled = true;
+				button.effect.textContent = "";
+				button.effect.append(
+					upgrade.effectText[0].replace("{0}", format(upgrade.effectAmount(level), upgrade.effectPrecision)),
+					document.createElement("br"),
+					upgrade.effectText[1],
+				);
+				button.cost.textContent = "";
+			}else{
                 button.disabled = D.lt(game.charge, cost);
                 button.effect.textContent = "";
                 button.effect.append(
@@ -244,7 +254,8 @@ tabs.automation = {
                     upgrade.effectText[1],
                 );
                 button.cost.textContent = "−" + format(cost) + " Charge";
-            }
+			}
+		}
         }
 
         let automatorList = Object.keys(automators).filter(x => !automators[x].requires || game.unlocks[automators[x].requires]);

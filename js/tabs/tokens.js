@@ -38,15 +38,26 @@ tabs.tokens = {
             let upgrade = tokenUpgrades[id][button.target];
             let level = game.tokenUpg[id]?.[button.target] ?? 0;
             let cost = upgrade.costAmount(level);
-            button.disabled = D.lt(game.tokens, cost);
-            button.effect.textContent = "";
-            button.effect.append(
-                upgrade.effectText[0].replace("{0}", format(upgrade.effectAmount(level), upgrade.effectPrecision)) + 
-                    " → " + upgrade.effectText[0].replace("{0}", format(upgrade.effectAmount(D.add(1, level)), upgrade.effectPrecision)),
-                document.createElement("br"),
-                upgrade.effectText[1],
-            );
-            button.cost.textContent = "−" + format(cost) + " Tokens";
+			if(D(level).gte(upgrade.maxAmount)){
+				button.disabled = true;
+				button.effect.textContent = "";
+				button.effect.append(
+					upgrade.effectText[0].replace("{0}", format(upgrade.effectAmount(level), upgrade.effectPrecision)),
+					document.createElement("br"),
+					upgrade.effectText[1],
+				);
+				button.cost.textContent = "";
+			}else{
+				button.disabled = D.lt(game.tokens, cost);
+				button.effect.textContent = "";
+				button.effect.append(
+					upgrade.effectText[0].replace("{0}", format(upgrade.effectAmount(level), upgrade.effectPrecision)) + 
+						" → " + upgrade.effectText[0].replace("{0}", format(upgrade.effectAmount(D.add(1, level)), upgrade.effectPrecision)),
+					document.createElement("br"),
+					upgrade.effectText[1],
+				);
+				button.cost.textContent = "−" + format(cost) + " Tokens";
+			}
         }
     },
     onStart() {

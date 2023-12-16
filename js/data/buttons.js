@@ -273,6 +273,125 @@ let unlocks = {
         conDisplay: () => "≥" + format(50) + " Collapsed Layers",
         execute: () => { updateTabVisibility(); },
     },
+    "rne8": {
+        requires: ["col2"],
+        desc: () => "Unlock Rune Tier Expansion",
+        condition: () => D.gte(game.gems, 1e15),
+        conDisplay: () => "−" + format(1e15) + " Gems",
+        execute: () => { game.gems = D.sub(game.gems, 1e15); },
+    },
+    "rne9": {
+        requires: ["rne8"],
+        desc: () => "Unlock 5th Rune Equipment Slot",
+        condition: () => D.gte(game.scraps, 1e15),
+        conDisplay: () => "−" + format(1e15) + " Glyphs",
+        execute: () => { game.scraps = D.sub(game.scraps, 1e15); },
+    },
+    "sig3": {
+        requires: ["col2"],
+        desc: () => "Sigil-Shift II",
+        condition: () => D.gte(game.money, '1e5000'),
+        conDisplay: () => "≥" + format('1e5000') + " Money",
+        execute: () => { while (game.sigils.length <= 9) game.sigils.push(D(0)); },
+    },
+    "atm9": {
+        requires: ["col2"],
+        desc: () => "Unlock Autocharger",
+        condition: () => D.gte(game.money, '1e7500'),
+        conDisplay: () => "≥" + format('1e7500') + " Money",
+        execute: () => { updateTabVisibility(); },
+    },
+    "col3": {
+        requires: ["sig3", "atm9", "rne9"],
+        desc: () => "Improve Collapse",
+        condition: () => D.gte(game.collapsed,100),
+        conDisplay: () => "≥" + format(100) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "rne10": {
+        requires: ["col3"],
+        desc: () => "Unlock 6th Rune Equipment Slot",
+        condition: () => D.gte(game.scraps, 1e20),
+        conDisplay: () => "−" + format(1e20) + " Glyphs",
+        execute: () => { game.scraps = D.sub(game.scraps, 1e20); },
+    },
+    "sig4": {
+        requires: ["col3"],
+        desc: () => "Sigil-Shift III",
+        condition: () => D.gte(game.money, '1e10000'),
+        conDisplay: () => "≥" + format('1e10000') + " Money",
+        execute: () => { while (game.sigils.length <= 9) game.sigils.push(D(0)); },
+    },
+    "atm10": {
+        requires: ["col3"],
+        desc: () => "Unlock Automerger",
+        condition: () => D.gte(game.money, '1e15000'),
+        conDisplay: () => "≥" + format('1e15000') + " Money",
+        execute: () => { updateTabVisibility(); },
+    },
+    "col4": {
+        requires: ["sig4", "atm10", "rne10"],
+        desc: () => "Unlock Another Collapse Boost",
+        condition: () => D.gte(game.collapsed,150),
+        conDisplay: () => "≥" + format(150) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "rne11": {
+        requires: ["col4"],
+        desc: () => "+50 Rune Inventory",
+        condition: () => D.gte(game.gems, 1e30),
+        conDisplay: () => "−" + format(1e30) + " Gems",
+        execute: () => { game.gems = D.sub(game.gems, 1e30); },
+    },
+    "rne12": {
+        requires: ["col4"],
+        desc: () => "Unlock 7th Rune Equipment Slot",
+        condition: () => D.gte(game.scraps, 1e25),
+        conDisplay: () => "−" + format(1e25) + " Glyphs",
+        execute: () => { game.scraps = D.sub(game.scraps, 1e25); },
+    },
+    "sig5": {
+        requires: ["col4"],
+        desc: () => "Sigil-Shift IV",
+        condition: () => D.gte(game.money, '1e20000'),
+        conDisplay: () => "≥" + format('1e20000') + " Money",
+        execute: () => { while (game.sigils.length <= 9) game.sigils.push(D(0)); },
+    },
+    "col5": {
+        requires: ["sig5", "rne11", "rne12"],
+        desc: () => "Unlock Another Collapse Boost",
+        condition: () => D.gte(game.collapsed,250),
+        conDisplay: () => "≥" + format(250) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "rne13": {
+        requires: ["col5"],
+        desc: () => "Unlock 8th Rune Equipment Slot",
+        condition: () => D.gte(game.scraps, 1e30),
+        conDisplay: () => "−" + format(1e30) + " Glyphs",
+        execute: () => { game.scraps = D.sub(game.scraps, 1e30); },
+    },
+    "sig6": {
+        requires: ["col5"],
+        desc: () => "Sigil-Shift V",
+        condition: () => D.gte(game.money, '1e40000'),
+        conDisplay: () => "≥" + format('1e40000') + " Money",
+        execute: () => { while (game.sigils.length <= 9) game.sigils.push(D(0)); },
+    },
+    "rne14": {
+        requires: ["col5"],
+        desc: () => "Improve Rune Effect",
+        condition: () => D.gte(game.gems, 1e40),
+        conDisplay: () => "−" + format(1e40) + " Gems",
+        execute: () => { game.gems = D.sub(game.gems, 1e40); },
+    },
+    "atm11": {
+        requires: ["col5"],
+        desc: () => "Unlock Rune Autobuyer",
+        condition: () => D.gte(game.money, '1e50000'),
+        conDisplay: () => "≥" + format('1e50000') + " Money",
+        execute: () => { updateTabVisibility(); },
+    },
 }
 let visibleUnlocks = [];
 
@@ -345,7 +464,7 @@ function makeRow(row) {
         game.ladder.push(highest);
     }
 	if(D.lte(highest.tier, row) && game.ladder.length == 10 && game.unlocks.col1){
-		//if(game.collapsed.gte(5) && !game.unlocks.col2)return;
+		if(game.collapsed.gte(100) && !game.unlocks.col3)return;
 		game.collapsed = game.collapsed.add(1);
 		for(let i = 2;i < 10; i++){
 			game.ladder[i-1]=game.ladder[i];
@@ -364,6 +483,7 @@ function makeRow(row) {
 		updateTokenStats();
 		updateSigilEffects();
 		allDirty = true;
+		if(currentTab == 'buttons')loadTab('buttons');
 	}
 }
 
@@ -460,6 +580,7 @@ function getButtonCostForCollapse(row, tier) {
 }
 
 function getCollapseMult() {
+	if(game.unlocks.col3)return getImCollapseMult();
 	let m = game.ladder[0].amount, mult = D(1);
     if(game.collapsed.gte(1)){
 		for(let i = 1;i <= game.collapsed.toNumber();i++){
@@ -468,4 +589,21 @@ function getCollapseMult() {
 		}
 	}
 	return mult;
+}
+
+function getHighestButtonForImCollapse(amount){
+    return D(amount).max(0).add(1).logBase(10).div(10).add(1).logBase(1.1);
+}
+
+function getButtonGainForImCollapse(tier) {
+    return D.pow(4, D.pow(1.05, tier).sub(1).mul(20)).mul(D(game.collapsed).add(100));
+}
+
+function getImCollapseMult() {
+	let m = game.ladder[0].amount, mult = D(1);
+	for(let i = 1;i <= 100;i++){
+		m = getButtonGainForImCollapse(getHighestButtonForImCollapse(m)).mul(temp.sigilEffects[0]).mul(game.unlocks.rne6?(temp.runeStats.money ?? 1):1);
+		mult = mult.mul(m);
+	}
+	return mult.mul(m.pow(D(game.collapsed).sub(100))).mul(D(game.ladder[1].amount).add(1));
 }

@@ -102,12 +102,15 @@ let tokenUpgrades = {
 }
 
 function getTokenMulti() {
-    return D.add(temp.runeStats.token ?? 0, 1).mul(temp.tokenUpgEffects.tokens.gain);
+    let mult=D.add(temp.runeStats.token ?? 0, 1).mul(temp.tokenUpgEffects.tokens.gain);
+	if(game.unlocks.col3)mult=mult.mul(D(game.collapsed).div(75).pow(2));
+	return mult;
 }
 
 function buyTokenUpgrade(cat, id) {
     let data = tokenUpgrades[cat][id];
     let level = game.tokenUpg[cat]?.[id] ?? 0;
+	if(D(level).gte(data.maxAmount))return;
     let cost = data.costAmount(level);
     if (D.gte(game.tokens, cost)) {
         game.tokens = D.sub(game.tokens, cost);

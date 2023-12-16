@@ -8,7 +8,8 @@ let temp = {
     maxRunes: 50,
     maxRuneEquip: 3,
     runeStats: {},
-
+	runeTierShift: D(0),
+	
     tokenUpgEffects: {},
     
     chargerUpgEffects: {},
@@ -34,8 +35,9 @@ function updateTemp() {
 
     temp.skillLevel = game.ladder.reduce((a, b) => D.add(a, b.level), 0);
 	 
-	  
-	temp.maxRuneEquip = 3 + (game.unlocks.rne7 ? 1 : 0)
+	temp.maxRunes = 50 + (game.unlocks.rne11 ? 50 : 0)
+	temp.maxRuneEquip = 3 + (game.unlocks.rne7 ? 1 : 0) + (game.unlocks.rne9 ? 1 : 0) + (game.unlocks.rne10 ? 1 : 0) + (game.unlocks.rne12 ? 1 : 0) + (game.unlocks.rne13 ? 1 : 0)
+	if(game.unlocks.rne8)temp.runeTierShift = getHighestRuneTier().sub(6).max(temp.runeTierShift);
 }
 
 function updateRuneStats() {
@@ -109,11 +111,29 @@ function updateSigilEffects() {
     temp.sigilEffects = {};
     for (let a = game.sigils.length - 1; a >= 0; a--) {
         temp.sigilEffects[a] = multi = D.mul(game.sigils[a], 0.05).mul(a + 1).add(1).mul(multi);
+		if(temp.sigilEffects[a].gte(1e36))temp.sigilEffects[a]=D.pow(10,temp.sigilEffects[a].log10().sqrt().mul(6));
         temp.sigilPoints = D.pow(2, a).mul(game.sigils[a]).add(temp.sigilPoints);
     }
-	if (game.unlocks.sig2) {
+	
+	if (game.unlocks.sig6) {
 		for (let a = game.sigils.length - 1; a >= 1; a--) {
-			temp.sigilEffects[a] = temp.sigilEffects[a - 1];
+			temp.sigilEffects[a] = temp.sigilEffects[Math.max(a - 5,0)];
+		}
+	}else if (game.unlocks.sig5) {
+		for (let a = game.sigils.length - 1; a >= 1; a--) {
+			temp.sigilEffects[a] = temp.sigilEffects[Math.max(a - 4,0)];
+		}
+	}else if (game.unlocks.sig4) {
+		for (let a = game.sigils.length - 1; a >= 1; a--) {
+			temp.sigilEffects[a] = temp.sigilEffects[Math.max(a - 3,0)];
+		}
+	}else if (game.unlocks.sig3) {
+		for (let a = game.sigils.length - 1; a >= 1; a--) {
+			temp.sigilEffects[a] = temp.sigilEffects[Math.max(a - 2,0)];
+		}
+	}else if (game.unlocks.sig2) {
+		for (let a = game.sigils.length - 1; a >= 1; a--) {
+			temp.sigilEffects[a] = temp.sigilEffects[Math.max(a - 1,0)];
 		}
 	}
 }
