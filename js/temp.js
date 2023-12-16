@@ -35,8 +35,8 @@ function updateTemp() {
 
     temp.skillLevel = game.ladder.reduce((a, b) => D.add(a, b.level), 0);
 	 
-	temp.maxRunes = 50 + (game.unlocks.rne11 ? 50 : 0)
-	temp.maxRuneEquip = 3 + (game.unlocks.rne7 ? 1 : 0) + (game.unlocks.rne9 ? 1 : 0) + (game.unlocks.rne10 ? 1 : 0) + (game.unlocks.rne12 ? 1 : 0) + (game.unlocks.rne13 ? 1 : 0)
+		temp.maxRunes = 50 + D(game.invUpgs ?? 0).toNumber() * 50
+		temp.maxRuneEquip = 3 + D(game.eqUpgs ?? 0).toNumber()
 	if(game.unlocks.rne8)temp.runeTierShift = getHighestRuneTier().sub(6).max(temp.runeTierShift);
 }
 
@@ -115,7 +115,12 @@ function updateSigilEffects() {
         temp.sigilPoints = D.pow(2, a).mul(game.sigils[a]).add(temp.sigilPoints);
     }
 	
-	if (game.unlocks.sig6) {
+	
+	if (game.unlocks.sig7) {
+		for (let a = game.sigils.length - 1; a >= 1; a--) {
+			temp.sigilEffects[a] = temp.sigilEffects[Math.max(a - 6,0)];
+		}
+	}else if (game.unlocks.sig6) {
 		for (let a = game.sigils.length - 1; a >= 1; a--) {
 			temp.sigilEffects[a] = temp.sigilEffects[Math.max(a - 5,0)];
 		}

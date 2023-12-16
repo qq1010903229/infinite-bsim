@@ -72,6 +72,52 @@ tabs.runes = {
             button.cost = cost;
         }
         
+        {
+            let button = document.createElement("button");
+            button.classList.add("pushy-button");
+            button.tabIndex = -1;
+            button.onclick = ev => {
+                buyInvUpg();
+                let cost = getInvUpgCost(game.invUpgs);
+                button.disabled = D.lt(game.money, cost);
+                button.blur();
+            }
+            moneyRow.append(button);
+            moneyRow.invUpgBtn = button;
+
+            let gain = document.createElement("div");
+            gain.textContent = "+50 Inventory Slot"
+            button.append(gain);
+            button.gain = gain;
+
+            let cost = document.createElement("div");
+            button.append(cost);
+            button.cost = cost;
+        }
+        
+        {
+            let button = document.createElement("button");
+            button.classList.add("pushy-button");
+            button.tabIndex = -1;
+            button.onclick = ev => {
+                buyEqUpg();
+                let cost = getEqUpgCost(game.eqUpgs);
+                button.disabled = D.lt(game.money, cost);
+                button.blur();
+            }
+            moneyRow.append(button);
+            moneyRow.eqUpgBtn = button;
+
+            let gain = document.createElement("div");
+            gain.textContent = "+1 Equipment Slot"
+            button.append(gain);
+            button.gain = gain;
+
+            let cost = document.createElement("div");
+            button.append(cost);
+            button.cost = cost;
+        }
+        
         this.data.money.append(extraButtons);
 
 
@@ -92,10 +138,13 @@ tabs.runes = {
 
 
         let equipRow = createRow();
+        equipRow.classList.add("rune-inventory");
         equipRow.name.textContent = "Equipped";
         equipRow.items = [];
         this.data.equip = equipRow;
         container.append(equipRow);
+
+        container.append(equipRow.bar = createScrollbar(equipRow));
 
         let detailsRow = createRow();
         detailsRow.classList.add("rune-details");
@@ -135,6 +184,12 @@ tabs.runes = {
         let gemUpgCost = getGemUpgCost(game.gemUpgs);
         this.data.money.gemUpgBtn.cost.textContent = "−" + format(gemUpgCost) + " Glyphs";
         this.data.money.gemUpgBtn.disabled = D.lt(game.scraps, gemUpgCost);
+        let invUpgCost = getInvUpgCost(game.invUpgs);
+        this.data.money.invUpgBtn.cost.textContent = "−" + format(invUpgCost) + " Gems";
+        this.data.money.invUpgBtn.disabled = D.lt(game.gems, invUpgCost);
+        let eqUpgCost = getEqUpgCost(game.eqUpgs);
+        this.data.money.eqUpgBtn.cost.textContent = "−" + format(eqUpgCost) + " Glyphs";
+        this.data.money.eqUpgBtn.disabled = D.lt(game.scraps, eqUpgCost);
 
         while (this.data.gem.items.length < 8) {
             let button = document.createElement("button");

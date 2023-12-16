@@ -64,7 +64,8 @@ let tokenUpgrades = {
         },
         upgEff: {
             effectAmount: (x) => D.mul(0.1, x).add(1),
-            effectText: ["^{0}", "effective generator upgrades"],
+            effectText: ["×{0}", "effective token doublers"],
+            maxAmount: 40,
             effectPrecision: 1,
             costAmount: (x) => D.pow(3, x).mul(1000),
         },
@@ -103,7 +104,7 @@ let tokenUpgrades = {
 
 function getTokenMulti() {
     let mult=D.add(temp.runeStats.token ?? 0, 1).mul(temp.tokenUpgEffects.tokens.gain);
-	if(game.unlocks.col3)mult=mult.mul(D(game.collapsed).div(75).pow(2));
+	if(game.unlocks.col3)mult=mult.mul(D(game.collapsed).div(75).pow(2).add(1));
 	return mult;
 }
 

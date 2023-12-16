@@ -245,13 +245,6 @@ let unlocks = {
         conDisplay: () => "≥" + format('1e2000') + " Money",
         execute: () => { updateTabVisibility(); },
     },
-    "rne7": {
-        requires: ["rne6"],
-        desc: () => "Unlock 4th Rune Equipment Slot",
-        condition: () => D.gte(game.scraps, 1e10),
-        conDisplay: () => "−" + format(1e10) + " Glyphs",
-        execute: () => { game.scraps = D.sub(game.scraps, 1e10); },
-    },
     "sig2": {
         requires: ["col1"],
         desc: () => "Sigil-Shift I",
@@ -267,7 +260,7 @@ let unlocks = {
         execute: () => { updateTabVisibility(); },
     },
     "col2": {
-        requires: ["tok4", "sig2", "atm8", "mle2", "rne7"],
+        requires: ["tok4", "sig2", "atm8", "mle2", "rne6"],
         desc: () => "Unlock Collapse Boost",
         condition: () => D.gte(game.collapsed,50),
         conDisplay: () => "≥" + format(50) + " Collapsed Layers",
@@ -279,13 +272,6 @@ let unlocks = {
         condition: () => D.gte(game.gems, 1e15),
         conDisplay: () => "−" + format(1e15) + " Gems",
         execute: () => { game.gems = D.sub(game.gems, 1e15); },
-    },
-    "rne9": {
-        requires: ["rne8"],
-        desc: () => "Unlock 5th Rune Equipment Slot",
-        condition: () => D.gte(game.scraps, 1e15),
-        conDisplay: () => "−" + format(1e15) + " Glyphs",
-        execute: () => { game.scraps = D.sub(game.scraps, 1e15); },
     },
     "sig3": {
         requires: ["col2"],
@@ -302,18 +288,11 @@ let unlocks = {
         execute: () => { updateTabVisibility(); },
     },
     "col3": {
-        requires: ["sig3", "atm9", "rne9"],
+        requires: ["sig3", "atm9", "rne8"],
         desc: () => "Improve Collapse",
         condition: () => D.gte(game.collapsed,100),
         conDisplay: () => "≥" + format(100) + " Collapsed Layers",
         execute: () => { updateTabVisibility(); },
-    },
-    "rne10": {
-        requires: ["col3"],
-        desc: () => "Unlock 6th Rune Equipment Slot",
-        condition: () => D.gte(game.scraps, 1e20),
-        conDisplay: () => "−" + format(1e20) + " Glyphs",
-        execute: () => { game.scraps = D.sub(game.scraps, 1e20); },
     },
     "sig4": {
         requires: ["col3"],
@@ -330,25 +309,11 @@ let unlocks = {
         execute: () => { updateTabVisibility(); },
     },
     "col4": {
-        requires: ["sig4", "atm10", "rne10"],
+        requires: ["sig4", "atm10"],
         desc: () => "Unlock Another Collapse Boost",
         condition: () => D.gte(game.collapsed,150),
         conDisplay: () => "≥" + format(150) + " Collapsed Layers",
         execute: () => { updateTabVisibility(); },
-    },
-    "rne11": {
-        requires: ["col4"],
-        desc: () => "+50 Rune Inventory",
-        condition: () => D.gte(game.gems, 1e30),
-        conDisplay: () => "−" + format(1e30) + " Gems",
-        execute: () => { game.gems = D.sub(game.gems, 1e30); },
-    },
-    "rne12": {
-        requires: ["col4"],
-        desc: () => "Unlock 7th Rune Equipment Slot",
-        condition: () => D.gte(game.scraps, 1e25),
-        conDisplay: () => "−" + format(1e25) + " Glyphs",
-        execute: () => { game.scraps = D.sub(game.scraps, 1e25); },
     },
     "sig5": {
         requires: ["col4"],
@@ -358,18 +323,11 @@ let unlocks = {
         execute: () => { while (game.sigils.length <= 9) game.sigils.push(D(0)); },
     },
     "col5": {
-        requires: ["sig5", "rne11", "rne12"],
+        requires: ["sig5"],
         desc: () => "Unlock Another Collapse Boost",
         condition: () => D.gte(game.collapsed,250),
         conDisplay: () => "≥" + format(250) + " Collapsed Layers",
         execute: () => { updateTabVisibility(); },
-    },
-    "rne13": {
-        requires: ["col5"],
-        desc: () => "Unlock 8th Rune Equipment Slot",
-        condition: () => D.gte(game.scraps, 1e30),
-        conDisplay: () => "−" + format(1e30) + " Glyphs",
-        execute: () => { game.scraps = D.sub(game.scraps, 1e30); },
     },
     "sig6": {
         requires: ["col5"],
@@ -390,6 +348,34 @@ let unlocks = {
         desc: () => "Unlock Rune Autobuyer",
         condition: () => D.gte(game.money, '1e50000'),
         conDisplay: () => "≥" + format('1e50000') + " Money",
+        execute: () => { updateTabVisibility(); },
+    },
+    "col6": {
+        requires: ["sig6", "rne14", "atm11"],
+        desc: () => "Unlock Another Collapse Boost",
+        condition: () => D.gte(game.collapsed,350),
+        conDisplay: () => "≥" + format(350) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "sig7": {
+        requires: ["col6"],
+        desc: () => "Sigil-Shift VI",
+        condition: () => D.gte(game.money, '1e80000'),
+        conDisplay: () => "≥" + format('1e80000') + " Money",
+        execute: () => { while (game.sigils.length <= 9) game.sigils.push(D(0)); },
+    },
+    "atm12": {
+        requires: ["col6"],
+        desc: () => "Improve Rune Buy-Scrap Automator",
+        condition: () => D.gte(game.charge, 1e50),
+        conDisplay: () => "−" + format(1e50) + " Charge",
+        execute: () => { game.charge = D.sub(game.charge, 1e50); },
+    },
+    "tok5": {
+        requires: ["col6"],
+        desc: () => "Improved Multi Button Tokens",
+        condition: () => D.gte(game.money, '1e60000'),
+        conDisplay: () => "≥" + format('1e60000') + " Money",
         execute: () => { updateTabVisibility(); },
     },
 }
@@ -432,7 +418,8 @@ function clickButton(row, tier, auto = false) {
             game.money = D.sub(game.money, cost);
             data.amount = getButtonGain(row, tier).mul(getRowMulti(row, index)).add(data.amount);
             data.presses = D.add(data.presses, 1);
-            if ((!auto || game.unlocks.tok4) && game.unlocks.tok1 && Math.random() * 100 <= temp.tokenUpgEffects.tokens.normalChance)
+			if (game.unlocks.tok5)game.tokens = D(game.collapsed).add(1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).add(game.tokens);
+            else if ((!auto || game.unlocks.tok4) && game.unlocks.tok1 && Math.random() * 100 <= temp.tokenUpgEffects.tokens.normalChance)
                 game.tokens = D.add(row, 1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).add(game.tokens);
             if (!auto) game.stats.presses++;
         }
@@ -529,7 +516,8 @@ function doMultiAuto(times) {
         game.money = D.sub(game.money, D.mul(cost, presses));
         row.amount = D.add(row.amount, D.mul(gain, presses).mul(getRowMulti(row.tier)));
         row.presses = D.add(row.presses, presses);
-	    if (game.unlocks.tok4)game.tokens = getTokenMulti().mul(presses).mul(temp.tokenUpgEffects.tokens.normalChance/100).add(game.tokens);
+		if (game.unlocks.tok5)game.tokens = D(game.collapsed).add(1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).mul(presses).add(game.tokens);
+	    else if (game.unlocks.tok4)game.tokens = getTokenMulti().mul(presses).mul(temp.tokenUpgEffects.tokens.normalChance/100).add(game.tokens);
         times = D.sub(times, presses);
         pos = D.sub(pos, 1);
     }

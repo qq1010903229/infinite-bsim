@@ -180,7 +180,7 @@ let automators = {
         title: "Sigil Automator",
         requires: "atm5a",
         levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(10, x)).mul(100000),
-        speed: (x) => D.add(x, 1).mul(getAutoSpeed()).mul(game.unlocks.col4?D(game.collapsed).div(10).pow(game.unlocks.col5?3:2):1),
+        speed: (x) => D.add(x, 1).mul(getAutoSpeed()).mul(game.unlocks.col4?D(game.collapsed).div(10).pow(game.unlocks.col6?4:game.unlocks.col5?3:2).add(1):1),
         speedPrecision: 0,
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
         fire: (x) => forgeSigil(0, x),
@@ -189,13 +189,13 @@ let automators = {
         title: "Rune Buy-Scrap Automator",
         requires: "atm6",
         levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(10, x)).mul(1e10),
-        speed: (x) => D.add(x, 1).mul(100).mul(getAutoSpeed()),
+        speed: (x) => D.add(x, 1).mul(100).mul(game.unlocks.atm12?D.add(x, 1).pow(1.5):1).mul(getAutoSpeed()),
         speedPrecision: 0,
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1)
             .mul(game.automators.scrap.tier ?? 1),
         fire: function(x){
-			let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, (game.automators.scrap.tier ?? 1) - 1)).mul(game.unlocks.col5?D(game.collapsed).div(10):1)
-			let cost = getRuneCost((game.automators.scrap.tier ?? 1) - 1);
+			let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, D(game.automators.scrap.tier ?? 1).sub(1))).mul(game.unlocks.col5?D(game.collapsed).div(10):1)
+			let cost = getRuneCost(D(game.automators.scrap.tier ?? 1).sub(1));
 			let count = game.gems.div(cost).floor().min(x)
 			game.scraps = D.add(game.scraps,count.mul(gain))
 			game.gems = D.sub(game.gems,count.mul(cost))
@@ -223,7 +223,7 @@ let automators = {
                 }
             },
             start(parent) {
-                {
+                if(!game.unlocks.atm12){
                     let container = document.createElement("div");
                     container.classList.add("sub-item");
                     parent.append(container);
@@ -295,21 +295,64 @@ let automators = {
                     container.append(title);
                     container.nameBox = title;
                 }
+                if(game.unlocks.atm12){
+                    let container = document.createElement("div");
+                    container.classList.add("config-item");
+                    parent.append(container);
+                    parent.factor = container;
+
+                    let title = document.createElement("div");
+                    title.textContent = "Tier: ";
+                    container.append(title);
+                    container.nameBox = title;
+                        
+                    let input = document.createElement("input");
+                    input.value = D(game.automators.scrap?.tier ?? 1).toString();
+                    input.oninput = () => {
+                        let num = D.fromString(input.value || "1").floor().max(1);
+                        if (num.array[0] == num.array[0]) {
+                            game.automators.scrap.tier = num;
+                        }
+                    }
+                    input.onchange = () => {
+                        input.value = D(game.automators.scrap?.tier ?? 1).toString();
+                    }
+					delete game.automators.scrap.maxTier;
+                    container.append(input);
+                    container.input = input;
+                }
+                if(game.unlocks.atm12){
+                    let container = document.createElement("div");
+                    container.classList.add("config-item");
+                    parent.append(container);
+                    parent.factor = container;
+					
+                    let title = document.createElement("div");
+                    container.append(title);
+                    container.nameBox = title;
+					this.details = title;
+                }
             },
             update(parent) {
-                let tier = game.automators.scrap?.tier ?? 1;
-                let maxtier = game.automators.scrap?.maxTier ?? 0;
-                
-                let tierCost = this.tierCost(maxtier);
+				if(!game.unlocks.atm12){
+					let tier = game.automators.scrap?.tier ?? 1;
+					let maxtier = game.automators.scrap?.maxTier ?? 0;
+					
+					let tierCost = this.tierCost(maxtier);
 
-                parent.tier.speed.textContent = "Tier " + format.comma(tier);
-                parent.tier.consumption.textContent = "×" + format.comma(tier) + " consumption";
+					parent.tier.speed.textContent = "Tier " + format.comma(tier);
+					parent.tier.consumption.textContent = "×" + format.comma(tier) + " consumption";
 
-                parent.tier.slider.max = maxtier + 1;
-                parent.tier.slider.value = tier;
-                
-                parent.tier.button.disabled = maxtier >= 29 || D.lt(game.charge, tierCost);
-                parent.tier.cost.textContent = maxtier >= 29 ? "Maxed out" : "−" + format(tierCost) + " Charge";
+					parent.tier.slider.max = maxtier + 1;
+					parent.tier.slider.value = tier;
+					
+					parent.tier.button.disabled = maxtier >= 29 || D.lt(game.charge, tierCost);
+					parent.tier.cost.textContent = maxtier >= 29 ? "Maxed out" : "−" + format(tierCost) + " Charge";
+				}else{
+					let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, D(game.automators.scrap.tier ?? 1).sub(1))).mul(game.unlocks.col5?D(game.collapsed).div(10):1).mul(automators.scrap.speed(game.automators.scrap.active));
+					let cost = getRuneCost(D(game.automators.scrap.tier ?? 1).sub(1)).mul(automators.scrap.speed(game.automators.scrap.active));
+					this.details.textContent = "-"+format(cost)+" Gems/s, +"+format(gain)+" Glyphs/s, ×" + format(D(game.automators.scrap.tier ?? 1)) + " consumption";
+				}
             },
         }
     },
@@ -522,7 +565,7 @@ let automators = {
                     let input = document.createElement("input");
                     input.value = D(game.automators.rune?.tier ?? 1).toString();
                     input.oninput = () => {
-                        let num = D.fromString(input.value || "1").floor();
+                        let num = D.fromString(input.value || "1").floor().max(1);
                         if (num.array[0] == num.array[0]) {
                             game.automators.rune.tier = num;
                         }
@@ -626,6 +669,7 @@ function getChargeValue(item) {
         .mul(D.mul(temp.chargerUpgEffects.fillBonus, game.charges.length).add(1))
         .mul(D.mul(temp.chargerUpgEffects.upgBonus, temp.totalAutomatorUpgs).add(1))
         .mul(D.add(temp.runeStats.charge ?? 0, 1));
+	if(game.unlocks.col6)gain = gain.mul(D(game.collapsed).div(100).add(1));
          if (item.type == "big") gain = D.mul(gain, 5);
     else if (item.type == "wide") gain = D.mul(gain, 15);
     return gain;
@@ -660,6 +704,6 @@ function upgradeAutomator(id) {
 
 function getAutoSpeed(){
 	let gain = D(1);
-	if(game.unlocks.col2)gain = gain.mul(D(game.collapsed).pow(0.75).min(100));
+	if(game.unlocks.col2)gain = gain.mul(D(game.collapsed).pow(0.75).add(1).min(100));
 		return gain;
 }
