@@ -46,19 +46,19 @@ let runeStats = {
     },
     gem: {
         display: "+{0} base Gem gain",
-        get: (q) => D.mul(game.unlocks.rne14?0.02:0.01, q),
+        get: (q) => D.mul(game.unlocks.rne8?0.02:0.01, q),
         precision: 2,
         stack: "add",
     },
     scrap: {
         display: "+{0} base Glyph gain",
-        get: (q) => D.mul(game.unlocks.rne14?0.02:0.007, q),
+        get: (q) => D.mul(game.unlocks.rne8?0.02:0.007, q),
         precision: 2,
         stack: "add",
     },
     token: {
         display: "+{0} base Token gain",
-        get: (q) => D.mul(0.004, q).pow(game.unlocks.rne14?1:0.8),
+        get: (q) => D.mul(0.004, q).pow(game.unlocks.rne8?1:0.8),
         precision: 2,
         stack: "add",
     },
@@ -166,7 +166,7 @@ function generateRune(tier) {
 }
 
 function getRuneQuality(rune) {
-	if(game.unlocks.rne14)return D.add(rune.tier, rune.rarity).add(10).pow(2).mul(D.add(rune.level, 1).sqrt());
+	if(game.unlocks.rne8)return D.add(rune.tier, rune.rarity).add(10).pow(2).mul(D.add(rune.level, 1).sqrt());
     return D.add(10, rune.tier).mul(D.add(rune.tier, rune.rarity).add(1)).mul(D.add(rune.level, 1).sqrt());
 }
 function getRuneScraps(rune) {

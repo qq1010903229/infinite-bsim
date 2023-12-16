@@ -266,7 +266,7 @@ let unlocks = {
         conDisplay: () => "≥" + format(50) + " Collapsed Layers",
         execute: () => { updateTabVisibility(); },
     },
-    "rne8": {
+    "rne7": {
         requires: ["col2"],
         desc: () => "Unlock Rune Tier Expansion",
         condition: () => D.gte(game.gems, 1e15),
@@ -288,7 +288,7 @@ let unlocks = {
         execute: () => { updateTabVisibility(); },
     },
     "col3": {
-        requires: ["sig3", "atm9", "rne8"],
+        requires: ["sig3", "atm9", "rne7"],
         desc: () => "Improve Collapse",
         condition: () => D.gte(game.collapsed,100),
         conDisplay: () => "≥" + format(100) + " Collapsed Layers",
@@ -336,7 +336,7 @@ let unlocks = {
         conDisplay: () => "≥" + format('1e40000') + " Money",
         execute: () => { while (game.sigils.length <= 9) game.sigils.push(D(0)); },
     },
-    "rne14": {
+    "rne8": {
         requires: ["col5"],
         desc: () => "Improve Rune Effect",
         condition: () => D.gte(game.gems, 1e40),
@@ -351,7 +351,7 @@ let unlocks = {
         execute: () => { updateTabVisibility(); },
     },
     "col6": {
-        requires: ["sig6", "rne14", "atm11"],
+        requires: ["sig6", "rne8", "atm11"],
         desc: () => "Unlock Another Collapse Boost",
         condition: () => D.gte(game.collapsed,350),
         conDisplay: () => "≥" + format(350) + " Collapsed Layers",
@@ -378,6 +378,27 @@ let unlocks = {
         conDisplay: () => "≥" + format('1e60000') + " Money",
         execute: () => { updateTabVisibility(); },
     },
+    "atm13": {
+        requires: ["atm12"],
+        desc: () => "Improve Sigil Automator",
+        condition: () => D.gte(game.charge, 1e60),
+        conDisplay: () => "−" + format(1e60) + " Charge",
+        execute: () => { game.charge = D.sub(game.charge, 1e60); },
+    },
+    "col7": {
+        requires: ["sig7", "tok5", "atm12"],
+        desc: () => "Unlock Another Collapse Boost",
+        condition: () => D.gte(game.collapsed,500),
+        conDisplay: () => "≥" + format(500) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "btn7": {
+        requires: ["col7"],
+        desc: () => "Reduce Button Requirements",
+        condition: () => D.gte(game.money, '1e111111'),
+        conDisplay: () => "−" + format('1e111111') + " Money",
+        execute: () => { game.money = D.sub(game.money,  '1e111111'); allDirty = true; },
+    },
 }
 let visibleUnlocks = [];
 
@@ -398,10 +419,14 @@ function getRowMulti(row, index) {
 }
 function getButtonCost(row, tier) {
     let base = D.eq(row, 0) ? 5 : D.eq(row, 1) ? 1e5 : D.pow(2, row).mul(250);
+	if(game.unlocks.btn7)base = D.pow(2, row);
+	if(game.unlocks.btn7)return D.add(row, 1).sqrt().mul(10).pow(D.pow(1.09, tier).sub(1).mul(10)).mul(base);
     return D.add(row, 1).mul(10).pow(D.pow(1.1, tier).sub(1).mul(10)).mul(base);
 }
 function getHighestButton(row, amount) {
     let base = D.eq(row, 0) ? 5 : D.eq(row, 1) ? 1e5 : D.pow(2, row).mul(250);
+	if(game.unlocks.btn7)base = D.pow(2, row);
+	if(game.unlocks.btn7)return D.div(amount, base).logBase(D.add(row, 1).sqrt().mul(10)).div(10).add(1).logBase(1.09).floor().max(-1);
     return D.div(amount, base).logBase(D.add(row, 1).mul(10)).div(10).add(1).logBase(1.1).floor().max(-1);
 }
 
@@ -580,7 +605,7 @@ function getCollapseMult() {
 }
 
 function getHighestButtonForImCollapse(amount){
-    return D(amount).max(0).add(1).logBase(10).div(10).add(1).logBase(1.1);
+    return D(amount).max(0).add(1).logBase(10).div(10).add(1).logBase(game.unlocks.btn7?1.09:1.1);
 }
 
 function getButtonGainForImCollapse(tier) {

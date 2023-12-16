@@ -31,13 +31,14 @@ function updateTemp() {
 
     temp.gemSpeed = D.add(game.gemUpgs, 1).mul(D.add(temp.runeStats.gem ?? 0, 1))
     .mul(D.pow(game.gemGens, temp.tokenUpgEffects.rune.genEff))
-      .mul(D.pow(temp.tokenUpgEffects.double.gems, temp.tokenUpgEffects.rune.upgEff));
+      .mul(D.pow(temp.tokenUpgEffects.double.gems, temp.tokenUpgEffects.rune.upgEff))
+		  .mul(game.unlocks.col7?D(game.collapsed).div(300).add(1).pow(3):1);
 
     temp.skillLevel = game.ladder.reduce((a, b) => D.add(a, b.level), 0);
 	 
 		temp.maxRunes = 50 + D(game.invUpgs ?? 0).toNumber() * 50
 		temp.maxRuneEquip = 3 + D(game.eqUpgs ?? 0).toNumber()
-	if(game.unlocks.rne8)temp.runeTierShift = getHighestRuneTier().sub(6).max(temp.runeTierShift);
+	if(game.unlocks.rne7)temp.runeTierShift = getHighestRuneTier().sub(6).max(temp.runeTierShift);
 }
 
 function updateRuneStats() {

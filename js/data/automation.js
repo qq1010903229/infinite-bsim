@@ -180,7 +180,7 @@ let automators = {
         title: "Sigil Automator",
         requires: "atm5a",
         levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(10, x)).mul(100000),
-        speed: (x) => D.add(x, 1).mul(getAutoSpeed()).mul(game.unlocks.col4?D(game.collapsed).div(10).pow(game.unlocks.col6?4:game.unlocks.col5?3:2).add(1):1),
+        speed: (x) => D.add(x, 1).mul(game.unlocks.atm13?D.add(x, 1).pow(1.5):1).mul(getAutoSpeed()).mul(game.unlocks.col4?D(game.collapsed).div(10).pow(game.unlocks.col7?5:game.unlocks.col6?4:game.unlocks.col5?3:2).add(1):1),
         speedPrecision: 0,
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
         fire: (x) => forgeSigil(0, x),
@@ -364,6 +364,7 @@ let automators = {
         speedPrecision: 0,
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
         fire: function(x){
+			x = x.toNumber();
 			for(let i=0;i<x;i++){
 				for(let j in milestones.global)clickGlobalMilestone(j);
 			}
@@ -497,6 +498,7 @@ let automators = {
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
         fire: function(x){
 			let c=0;
+			x = x.toNumber();
 			while(x){
 				let b=0;
 				for(let i=0;i<game.runes.length;i++){
@@ -538,6 +540,7 @@ let automators = {
 			let tier = D(game.automators.rune?.tier ?? 1).sub(1);
 			let cost = getRuneCost(tier);
 			let b=1;
+			x = x.toNumber();
 			while (D.gte(game.gems, cost) && game.runes.length + game.runeEquip.length < temp.maxRunes && x > 0) {
 				game.gems = D.sub(game.gems, cost);
 				let rune = generateRune(tier);

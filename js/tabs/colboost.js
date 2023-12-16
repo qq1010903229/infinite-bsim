@@ -30,7 +30,7 @@ tabs.colboost = {
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 100 Collapsed Layers</li></ul>';return;
 		}
 		if(game.unlocks.col4){
-			tempHTML+='<li>×'+format(D(game.collapsed).div(10).pow(game.unlocks.col6?4:game.unlocks.col5?3:2).add(1),2)+' Sigil Automator Speed</li>';
+			tempHTML+='<li>×'+format(D(game.collapsed).div(10).pow(game.unlocks.col7?5:game.unlocks.col6?4:game.unlocks.col5?3:2).add(1),2)+' Sigil Automator Speed</li>';
 		}else{
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 150 Collapsed Layers</li></ul>';return;
 		}
@@ -43,6 +43,11 @@ tabs.colboost = {
 			tempHTML+='<li>×'+format(D(game.collapsed).div(100).add(1),2)+' Charge gain</li>';
 		}else{
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 350 Collapsed Layers</li></ul>';return;
+		}
+		if(game.unlocks.col7){
+			tempHTML+='<li>×'+format(D(game.collapsed).div(300).add(1).pow(3))+' Gem gain</li>';
+		}else{
+			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 500 Collapsed Layers</li></ul>';return;
 		}
         this.data.money.descInfo.innerHTML = tempHTML+'</ul>';
     },
