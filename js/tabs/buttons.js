@@ -109,7 +109,7 @@ tabs.buttons = {
                 button.tier = D.add(offset, b);
                 let cost = getButtonCost(data.tier, button.tier);
 				if (needsUpdate) {
-                    button.gain.textContent = "+" + format(getSuperButtonGain(data.tier, button.tier).mul(row.multi)) + " " + name;
+                    button.gain.textContent = "+" + format(getButtonGain(data.tier, button.tier).mul(row.multi)) + " " + name;
                     button.cost.textContent = (a == 0 ? "−" : "≥") + format(cost) + " " + prevName;
                     if (game.unlocks.btn6) button.setAttribute("mark", "#" + format(button.tier.add(1)));
                 }
