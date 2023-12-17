@@ -85,14 +85,16 @@ tabs.sigils = {
             ctn.amount.textContent = "×" + format(game.sigils[b]);
         }
         
-        while (this.data.details.items.length < game.sigils.length) {
+        while (this.data.details.items.length < (game.unlocks.sig10?1:game.sigils.length)) {
             let ctn = document.createElement("li");
             this.data.details.descInfo.append(ctn);
             this.data.details.items.push(ctn);
 
         }
 
-        for (let b = 0; b < game.sigils.length; b++) {
+		if (game.unlocks.sig10){
+			this.data.details.items[0].textContent = "×" + format(temp.sigilEffects[0], 2) + " all button gains";
+        }else for (let b = 0; b < game.sigils.length; b++) {
             let ctn = this.data.details.items[b];
             let tier = game.ladder[b].tier;
             let name = D.lt(tier, tierNames.length) ? tierNames[D(tier).toNumber()] : "Reset "+D(tier).toNumber();

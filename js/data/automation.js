@@ -133,7 +133,7 @@ let automators = {
                     upgBtn.append(cost);
                     container.cost = cost;
                 }
-                {
+                if(!game.unlocks.btn8){
                     let container = document.createElement("div");
                     container.classList.add("config-item");
                     parent.append(container);
@@ -180,7 +180,7 @@ let automators = {
         title: "Sigil Automator",
         requires: "atm5a",
         levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(10, x)).mul(100000),
-        speed: (x) => D.add(x, 1).mul(game.unlocks.atm13?D.add(x, 1).pow(1.5):1).mul(getAutoSpeed()).mul(game.unlocks.col4?D(game.collapsed).div(10).pow(game.unlocks.col7?5:game.unlocks.col6?4:game.unlocks.col5?3:2).add(1):1),
+        speed: (x) => D.add(x, 1).mul(game.unlocks.atm13?D.add(x, 1).pow(1.5):1).mul(getAutoSpeed()).mul(game.unlocks.col4?D(game.collapsed).div(10).pow(game.unlocks.col11?8:game.unlocks.col10?7:game.unlocks.col9?6:game.unlocks.col7?5:game.unlocks.col6?4:game.unlocks.col5?3:2).add(1):1),
         speedPrecision: 0,
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
         fire: (x) => forgeSigil(0, x),
@@ -584,6 +584,15 @@ let automators = {
             },
         }
     },
+    super_multi: {
+        title: "Super-Multi Automator",
+        requires: "col11",
+        levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(2, x)).mul(1e75),
+        speed: (x) => D.add(x, 1).div(100).mul(getAutoSpeed()),
+        speedPrecision: 0,
+        consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
+        fire: (x) => doSuperMultiAuto(x),
+    },
 }
 
 function doChargerDrag(delta, dTime) {
@@ -707,6 +716,7 @@ function upgradeAutomator(id) {
 
 function getAutoSpeed(){
 	let gain = D(1);
-	if(game.unlocks.col2)gain = gain.mul(D(game.collapsed).pow(0.75).add(1).min(100));
-		return gain;
+	if(game.unlocks.col9)gain = gain.mul(100);
+	else if(game.unlocks.col2)gain = gain.mul(D(game.collapsed).pow(0.75).add(1).min(100));
+	return gain;
 }

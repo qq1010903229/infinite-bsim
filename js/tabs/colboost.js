@@ -22,15 +22,75 @@ tabs.colboost = {
         this.onTick();
     },
     onTick() {
+		
+        while (this.data.rows.length < game.super_ladder.length) {
+            let row = createRow();
+            container.append(row);
+            this.data.rows.push(row);
+        }
+        let prevName = "Collapsed Layers";
+        for (let a = 0; a < game.super_ladder.length; a++) {
+            let data = game.super_ladder[a];
+            let row = this.data.rows[a];
+            let name = D.lt(data.tier, tierNames.length) ? "Super-"+tierNames[D(data.tier).toNumber()] : "Super-Reset "+D(data.tier).toNumber();
+            row.style.setProperty("--background", tierColors[D(data.tier).toNumber()%tierColors.length]);
+            row.amount.textContent = format(data.amount);
+            row.name.textContent = name;
+
+            while (row.items.length < 8) {
+                let button = document.createElement("button");
+                button.classList.add("pushy-button");
+                button.row = data.tier;
+                button.tabIndex = -1;
+                button.onclick = ev => {
+                    clickSuperButton(button.row, button.tier);
+                    let cost = getSuperButtonCost(data.tier, button.tier);
+                    button.disabled = D.lt(a == 0 ? game.collapsed : game.super_ladder[a - 1].amount, cost);
+                    button.blur();
+                }
+                row.append(button);
+                row.items.push(button);
+
+                let gain = document.createElement("div");
+                button.append(gain);
+                button.gain = gain;
+
+                let cost = document.createElement("div");
+                button.append(cost);
+                button.cost = cost;
+            }
+
+            if (game.unlocks.btn5) data.level = getHighestSuperButton(data.tier, a == 0 ? game.collapsed : game.super_ladder[a - 1].amount).max(data.level);
+            let offset = D.sub(data.level, 6).max(0);
+            let multi = getSuperMulti(data.tier);
+            let needsUpdate = allDirty || D.neq(multi, row.multi) || D.neq(row.items[0]?.tier ?? -1, offset);
+            row.multi = multi;
+            row.rate.textContent = "×" + format(row.multi);
+
+            for (let b = 0; b < 8; b++) {
+                let button = row.items[b];
+                button.tier = D.add(offset, b);
+                let cost = getSuperButtonCost(data.tier, button.tier);
+				if (needsUpdate) {
+                    button.gain.textContent = "+" + format(getSuperButtonGain(data.tier, button.tier).mul(row.multi)) + " " + name;
+                    button.cost.textContent = "≥" + format(cost) + " " + prevName;
+                    if (game.unlocks.btn6) button.setAttribute("mark", "#" + format(button.tier.add(1)));
+                }
+                button.disabled = D.lt(a == 0 ? game.collapsed : game.super_ladder[a - 1].amount, cost);
+            }
+
+            prevName = name;
+        }
+		
         this.data.money.amount.textContent = format(game.collapsed);
-		let tempHTML='<ul><li>×'+format(D(game.collapsed).pow(0.75).add(1).min(100),2)+' Automation Speed</li>';
+		let tempHTML='<ul><li>×'+format(game.unlocks.col9?100:D(game.collapsed).pow(0.75).add(1).min(100),2)+' Automation Speed</li>';
 		if(game.unlocks.col3){
 			tempHTML+='<li>×'+format(D(game.collapsed).div(75).pow(2).add(1),2)+' Tokens</li>';
 		}else{
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 100 Collapsed Layers</li></ul>';return;
 		}
 		if(game.unlocks.col4){
-			tempHTML+='<li>×'+format(D(game.collapsed).div(10).pow(game.unlocks.col7?5:game.unlocks.col6?4:game.unlocks.col5?3:2).add(1),2)+' Sigil Automator Speed</li>';
+			tempHTML+='<li>×'+format(D(game.collapsed).div(10).pow(game.unlocks.col11?8:game.unlocks.col10?7:game.unlocks.col9?6:game.unlocks.col7?5:game.unlocks.col6?4:game.unlocks.col5?3:2).add(1),2)+' Sigil Automator Speed</li>';
 		}else{
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 150 Collapsed Layers</li></ul>';return;
 		}
@@ -49,7 +109,30 @@ tabs.colboost = {
 		}else{
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 500 Collapsed Layers</li></ul>';return;
 		}
+		if(game.unlocks.col8){
+			tempHTML+='<li>Unlocked Super Buttons</li>';
+		}else{
+			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 600 Collapsed Layers</li></ul>';return;
+		}
+		if(game.unlocks.col10){
+			tempHTML+='<li>Super-Multi won\'t reset anything</li>';
+		}else{
+			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 900 Collapsed Layers</li></ul>';return;
+		}
+		if(game.unlocks.col11){
+			tempHTML+='<li>Unlock Super-Multi Automator</li>';
+		}else{
+			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 1000 Collapsed Layers</li></ul>';return;
+		}
+		if(game.unlocks.col12){
+			tempHTML+='<li>Coming Soon...</li>';
+		}else{
+			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 1111 Collapsed Layers</li></ul>';return;
+		}
         this.data.money.descInfo.innerHTML = tempHTML+'</ul>';
+		
+		
+		
     },
     onEnd() {
         this.data = null;

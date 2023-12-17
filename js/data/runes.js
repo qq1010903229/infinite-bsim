@@ -38,7 +38,7 @@ let runeStats = {
         display: "×{0} Money gain",
         get(q){
 			if(D(q).gte(500))q = D(q).div(5).log10().pow(2).mul(125);
-			//if(D(q).gte(1000))q = D(q).log10().pow(2).div(9).mul(1000);
+			if(D(q).gte(2000))q = D(q).div(20).log10().pow(4).mul(125);
 			return D.pow(1.01, q);
 		},
         precision: 2,
@@ -46,25 +46,25 @@ let runeStats = {
     },
     gem: {
         display: "+{0} base Gem gain",
-        get: (q) => D.mul(game.unlocks.rne8?0.02:0.01, q),
+        get: (q) => D.mul(game.unlocks.rne9?0.05:game.unlocks.rne8?0.02:0.01, q),
         precision: 2,
         stack: "add",
     },
     scrap: {
         display: "+{0} base Glyph gain",
-        get: (q) => D.mul(game.unlocks.rne8?0.02:0.007, q),
+        get: (q) => D.mul(game.unlocks.rne9?0.05:game.unlocks.rne8?0.02:0.007, q),
         precision: 2,
         stack: "add",
     },
     token: {
         display: "+{0} base Token gain",
-        get: (q) => D.mul(0.004, q).pow(game.unlocks.rne8?1:0.8),
+        get: (q) => D.mul(game.unlocks.rne9?0.05:0.004, q).pow(game.unlocks.rne8?1:0.8),
         precision: 2,
         stack: "add",
     },
     charge: {
         display: "+{0} base Charge gain",
-        get: (q) => D.mul(0.006, q).pow(1.2).min(q),
+        get: (q) => D.mul(game.unlocks.rne9?0.02:0.006, q).pow(1.2).min(q),
         precision: 2,
         stack: "add",
     },

@@ -48,6 +48,8 @@ function getStartGame() {
         },
 
         currentTab: "buttons",
+        
+		super_ladder: [],
     }
 }
 

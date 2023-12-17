@@ -64,7 +64,7 @@ let tokenUpgrades = {
         },
         upgEff: {
             effectAmount: (x) => D.mul(0.1, x).add(1),
-            effectText: ["×{0}", "effective token doublers"],
+            effectText: ["×{0}", "effective gem token doublers"],
             maxAmount: 40,
             effectPrecision: 1,
             costAmount: (x) => D.pow(3, x).mul(1000),

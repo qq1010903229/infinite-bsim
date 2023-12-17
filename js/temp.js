@@ -29,7 +29,7 @@ function updateTemp() {
         .mul(temp.milestoneMultis.money ?? 1)
         .mul(temp.tokenUpgEffects.double.money);
 
-    temp.gemSpeed = D.add(game.gemUpgs, 1).mul(D.add(temp.runeStats.gem ?? 0, 1))
+    temp.gemSpeed = D.add(game.unlocks.rne10?D.pow(3,game.gemUpgs):game.gemUpgs, 1).mul(D.add(temp.runeStats.gem ?? 0, 1))
     .mul(D.pow(game.gemGens, temp.tokenUpgEffects.rune.genEff))
       .mul(D.pow(temp.tokenUpgEffects.double.gems, temp.tokenUpgEffects.rune.upgEff))
 		  .mul(game.unlocks.col7?D(game.collapsed).div(300).add(1).pow(3):1);
@@ -117,7 +117,19 @@ function updateSigilEffects() {
     }
 	
 	
-	if (game.unlocks.sig7) {
+	if (game.unlocks.sig10) {
+		for (let a = game.sigils.length - 1; a >= 1; a--) {
+			temp.sigilEffects[a] = temp.sigilEffects[0];
+		}
+	}else if (game.unlocks.sig9) {
+		for (let a = game.sigils.length - 1; a >= 1; a--) {
+			temp.sigilEffects[a] = temp.sigilEffects[Math.max(a - 8,0)];
+		}
+	}else if (game.unlocks.sig8) {
+		for (let a = game.sigils.length - 1; a >= 1; a--) {
+			temp.sigilEffects[a] = temp.sigilEffects[Math.max(a - 7,0)];
+		}
+	}else if (game.unlocks.sig7) {
 		for (let a = game.sigils.length - 1; a >= 1; a--) {
 			temp.sigilEffects[a] = temp.sigilEffects[Math.max(a - 6,0)];
 		}
