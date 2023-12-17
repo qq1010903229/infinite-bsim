@@ -11,6 +11,7 @@ tabs.colboost = {
         let moneyRow = createRow();
         moneyRow.name.textContent = "Collapsed Layers";
         let detailsInfo = document.createElement("div");
+        moneyRow.classList.add("rune-details");
         detailsInfo.classList.add("desc-info");
         moneyRow.descInfo = detailsInfo;
         moneyRow.append(detailsInfo);
@@ -125,7 +126,7 @@ tabs.colboost = {
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 1000 Collapsed Layers</li></ul>';return;
 		}
 		if(game.unlocks.col12){
-			tempHTML+='<li>Coming Soon...</li>';
+			tempHTML+='<li>-3 uncollapsed layers</li>';
 		}else{
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 1111 Collapsed Layers</li></ul>';return;
 		}

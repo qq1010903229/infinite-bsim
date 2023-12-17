@@ -474,7 +474,7 @@ let unlocks = {
         desc: () => "Unlock Another Collapse Boost",
         condition: () => D.gte(game.collapsed,1111),
         conDisplay: () => "≥" + format(1111) + " Collapsed Layers",
-        execute: () => { updateTabVisibility(); },
+        execute: () => { game.ladder.pop();game.ladder.pop();game.ladder.pop(); game.automators.reset.depth=6;loadTab('buttons');updateTabVisibility(); },
     },
 }
 let visibleUnlocks = [];
@@ -600,7 +600,7 @@ function clickSuperButton(row, tier, auto = false) {
 
 function makeRow(row) {
     let highest = game.ladder[game.ladder.length - 1] ?? {tier: -1};
-    while (D.lte(highest.tier, row) && game.ladder.length < 10) {
+    while (D.lte(highest.tier, row) && game.ladder.length < (game.unlocks.col12?7:10)) {
         highest = {
             tier: D.add(highest.tier, 1), 
             amount: D(0), 
@@ -630,9 +630,9 @@ function makeRow(row) {
 		updateSigilEffects();
 		allDirty = true;
 	}
-	if(D.lte(highest.tier, row) && game.ladder.length == 10 && game.unlocks.col9){
+	if(D.lte(highest.tier, row) && game.ladder.length == (game.unlocks.col12?7:10) && game.unlocks.col9){
 		let s = D.sub(row,highest.tier).add(1).floor();
-		for(let i = 1;i < 10; i++){
+		for(let i = 1;i < (game.unlocks.col12?7:10); i++){
 			game.ladder[i]=game.ladder[D.add(i,s).toNumber()] ?? {
 				tier: D.add(game.ladder[i].tier, s), 
 				amount: D(0), 

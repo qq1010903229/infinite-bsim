@@ -161,6 +161,7 @@ let automators = {
             },
             update(parent) {
                 let depth = game.automators.reset?.depth ?? 1;
+				if(depth >= (game.unlocks.col12?6:9))game.automators.reset.depth = (game.unlocks.col12?6:9);
                 let maxDepth = game.automators.reset?.maxDepth ?? 0;
                 
                 let depthCost = this.depthCost(maxDepth);
@@ -169,6 +170,7 @@ let automators = {
                 parent.depth.consumption.textContent = "^" + format.comma(automators.reset.depthTable[depth], 1) + " consumption";
 
                 parent.depth.slider.max = maxDepth + 5;
+				if(parent.depth.slider.max >= (game.unlocks.col12?6:9))parent.depth.slider.max = (game.unlocks.col12?6:9);
                 parent.depth.slider.value = depth;
                 
                 parent.depth.button.disabled = maxDepth >= 4 || D.lt(game.charge, depthCost);
