@@ -166,6 +166,7 @@ function generateRune(tier) {
 }
 
 function getRuneQuality(rune) {
+	if(game.unlocks.rne12)return D.add(rune.tier, rune.rarity).max(D.mul(rune.tier, D(rune.rarity).add(1).sqrt())).add(10).pow(2).mul(D.add(rune.level, 1).sqrt());
 	if(game.unlocks.rne8)return D.add(rune.tier, rune.rarity).add(10).pow(2).mul(D.add(rune.level, 1).sqrt());
     return D.add(10, rune.tier).mul(D.add(rune.tier, rune.rarity).add(1)).mul(D.add(rune.level, 1).sqrt());
 }

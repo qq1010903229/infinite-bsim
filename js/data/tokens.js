@@ -59,6 +59,7 @@ let tokenUpgrades = {
         genEff: {
             effectAmount: (x) => D.mul(0.1, x).add(1),
             effectText: ["^{0}", "effective gem generators"],
+            maxAmount: 90,
             effectPrecision: 1,
             costAmount: (x) => D.pow(3, x).mul(1000),
         },
@@ -68,6 +69,14 @@ let tokenUpgrades = {
             maxAmount: 40,
             effectPrecision: 1,
             costAmount: (x) => D.pow(3, x).mul(1000),
+        },
+        upgEff1: {
+            requires: ["tok6"],
+            effectAmount: (x) => D.mul(0.1, x).add(1),
+            effectText: ["×{0}", "effective generator upgrades"],
+            maxAmount: 40,
+            effectPrecision: 1,
+            costAmount: (x) => D.pow(3, x).mul(1e40),
         },
     },
     runeEff: {
@@ -98,6 +107,20 @@ let tokenUpgrades = {
             effectPrecision: 0,
             maxAmount: 15,
             costAmount: (x) => D.pow(2.5, x).mul(2000),
+        },
+    },
+    ext1: {
+        superTierFactor: {
+            effectAmount: (x) => D.mul(0.05, x).add(1),
+            effectText: ["^{0}", "super button tier to Token multi"],
+            effectPrecision: 2,
+            costAmount: (x) => D.add(7, x).pow(x).mul(1e40),
+        },
+        sigil: {
+            effectAmount: (x) => D.pow(0.95, x).mul(100),
+            effectText: ["{0}%", "sigil effect softcap effect"],
+            effectPrecision: 2,
+            costAmount: (x) => D.pow(2.5, x).mul(1e40),
         },
     },
 }
