@@ -161,7 +161,7 @@ let automators = {
             },
             update(parent) {
                 let depth = game.automators.reset?.depth ?? 1;
-				if(depth >= (game.unlocks.col13?4:game.unlocks.col12?6:9))game.automators.reset.depth = (game.unlocks.col13?4:game.unlocks.col12?6:9);
+				if(depth >= (game.unlocks.col14?3:game.unlocks.col13?4:game.unlocks.col12?6:9))game.automators.reset.depth = (game.unlocks.col14?3:game.unlocks.col13?4:game.unlocks.col12?6:9);
                 let maxDepth = game.automators.reset?.maxDepth ?? 0;
                 
                 let depthCost = this.depthCost(maxDepth);
@@ -170,7 +170,7 @@ let automators = {
                 parent.depth.consumption.textContent = "^" + format.comma(automators.reset.depthTable[depth], 1) + " consumption";
 
                 parent.depth.slider.max = maxDepth + 5;
-				if(parent.depth.slider.max >= (game.unlocks.col13?4:game.unlocks.col12?6:9))parent.depth.slider.max = (game.unlocks.col13?4:game.unlocks.col12?6:9);
+				if(parent.depth.slider.max >= (game.unlocks.col14?3:game.unlocks.col13?4:game.unlocks.col12?6:9))parent.depth.slider.max = (game.unlocks.col14?3:game.unlocks.col13?4:game.unlocks.col12?6:9);
                 parent.depth.slider.value = depth;
                 
                 parent.depth.button.disabled = maxDepth >= 4 || D.lt(game.charge, depthCost);
@@ -182,7 +182,7 @@ let automators = {
         title: "Sigil Automator",
         requires: "atm5a",
         levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(10, x)).mul(100000),
-        speed: (x) => D.add(x, 1).mul(game.unlocks.atm13?D.add(x, 1).pow(1.5):1).mul(getAutoSpeed()).mul(game.unlocks.col4?D(game.collapsed).div(10).pow(game.unlocks.col13?12:game.unlocks.col12?10:game.unlocks.col11?8:game.unlocks.col10?7:game.unlocks.col9?6:game.unlocks.col7?5:game.unlocks.col6?4:game.unlocks.col5?3:2).add(1):1),
+        speed: (x) => D.add(x, 1).mul(game.unlocks.atm13?D.add(x, 1).pow(1.5):1).mul(getAutoSpeed()).mul(game.unlocks.col4?D(game.collapsed).div(10).pow(game.unlocks.col14?15:game.unlocks.col13?12:game.unlocks.col12?10:game.unlocks.col11?8:game.unlocks.col10?7:game.unlocks.col9?6:game.unlocks.col7?5:game.unlocks.col6?4:game.unlocks.col5?3:2).add(1):1),
         speedPrecision: 0,
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
         fire: (x) => forgeSigil(0, x),

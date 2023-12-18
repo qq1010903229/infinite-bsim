@@ -91,7 +91,7 @@ tabs.colboost = {
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 100 Collapsed Layers</li></ul>';return;
 		}
 		if(game.unlocks.col4){
-			tempHTML+='<li>×'+format(D(game.collapsed).div(10).pow(game.unlocks.col13?12:game.unlocks.col12?10:game.unlocks.col11?8:game.unlocks.col10?7:game.unlocks.col9?6:game.unlocks.col7?5:game.unlocks.col6?4:game.unlocks.col5?3:2).add(1),2)+' Sigil Automator Speed</li>';
+			tempHTML+='<li>×'+format(D(game.collapsed).div(10).pow(game.unlocks.col14?15:game.unlocks.col13?12:game.unlocks.col12?10:game.unlocks.col11?8:game.unlocks.col10?7:game.unlocks.col9?6:game.unlocks.col7?5:game.unlocks.col6?4:game.unlocks.col5?3:2).add(1),2)+' Sigil Automator Speed</li>';
 		}else{
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 150 Collapsed Layers</li></ul>';return;
 		}
@@ -125,7 +125,10 @@ tabs.colboost = {
 		}else{
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 1000 Collapsed Layers</li></ul>';return;
 		}
-		if(game.unlocks.col13){
+		
+		if(game.unlocks.col14){
+			tempHTML+='<li>-6 uncollapsed layers</li>';
+		}else if(game.unlocks.col13){
 			tempHTML+='<li>-5 uncollapsed layers</li>';
 		}else if(game.unlocks.col12){
 			tempHTML+='<li>-3 uncollapsed layers</li>';

@@ -499,7 +499,7 @@ let unlocks = {
     },
     "col13": {
         requires: ["rne11","rne12"],
-        desc: () => "Improve Collapse",
+        desc: () => "Improve Collapse III",
         condition: () => D.gte(game.collapsed,2000),
         conDisplay: () => "≥" + format(2000) + " Collapsed Layers",
         execute: () => { game.ladder.pop();game.ladder.pop(); game.automators.reset.depth=4;loadTab('buttons');updateTabVisibility(); },
@@ -524,6 +524,13 @@ let unlocks = {
         condition: () => D.gte(game.collapsed,2500),
         conDisplay: () => "≥" + format(2500) + " Collapsed Layers",
         execute: () => { updateTabVisibility(); },
+    },
+    "col14": {
+        requires: ["tok7","rne13"],
+        desc: () => "Improve Collapse IV",
+        condition: () => D.gte(game.collapsed,3000),
+        conDisplay: () => "≥" + format(3000) + " Collapsed Layers",
+        execute: () => { game.ladder.pop(); game.automators.reset.depth=3;loadTab('buttons');updateTabVisibility(); },
     },
 }
 let visibleUnlocks = [];
@@ -649,7 +656,7 @@ function clickSuperButton(row, tier, auto = false) {
 
 function makeRow(row) {
     let highest = game.ladder[game.ladder.length - 1] ?? {tier: -1};
-    while (D.lte(highest.tier, row) && game.ladder.length < (game.unlocks.col13?5:game.unlocks.col12?7:10)) {
+    while (D.lte(highest.tier, row) && game.ladder.length < (game.unlocks.col14?4:game.unlocks.col13?5:game.unlocks.col12?7:10)) {
         highest = {
             tier: D.add(highest.tier, 1), 
             amount: D(0), 
@@ -679,9 +686,9 @@ function makeRow(row) {
 		updateSigilEffects();
 		allDirty = true;
 	}
-	if(D.lte(highest.tier, row) && game.ladder.length == (game.unlocks.col13?5:game.unlocks.col12?7:10) && game.unlocks.col9){
+	if(D.lte(highest.tier, row) && game.ladder.length == (game.unlocks.col14?4:game.unlocks.col13?5:game.unlocks.col12?7:10) && game.unlocks.col9){
 		let s = D.sub(row,highest.tier).add(1).floor();
-		for(let i = 1;i < (game.unlocks.col13?5:game.unlocks.col12?7:10); i++){
+		for(let i = 1;i < (game.unlocks.col14?4:game.unlocks.col13?5:game.unlocks.col12?7:10); i++){
 			game.ladder[i]=game.ladder[D.add(i,s).toNumber()] ?? {
 				tier: D.add(game.ladder[i].tier, s), 
 				amount: D(0), 
