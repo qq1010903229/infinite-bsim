@@ -85,20 +85,23 @@ tabs.sigils = {
             ctn.amount.textContent = "×" + format(game.sigils[b]);
         }
         
-        while (this.data.details.items.length < (game.unlocks.sig10?1:game.sigils.length)) {
+        while (this.data.details.items.length < (game.unlocks.sig11?2:game.unlocks.sig10?1:game.sigils.length)) {
             let ctn = document.createElement("li");
             this.data.details.descInfo.append(ctn);
             this.data.details.items.push(ctn);
 
         }
 
+		if (game.unlocks.sig11){
+			this.data.details.items[1].textContent = "×" + format(temp.addSigilEffect1 ?? 1, 2) + " all token gains";
+        }
 		if (game.unlocks.sig10){
 			this.data.details.items[0].textContent = "×" + format(temp.sigilEffects[0], 2) + " all button gains";
         }else for (let b = 0; b < game.sigils.length; b++) {
             let ctn = this.data.details.items[b];
             let tier = game.ladder[b]?.tier ?? -1;
 			if(D.lt(0))continue;
-            let name = D.lt(tier, tierNames.length) ? tierNames[D(tier).toNumber()] : "Reset "+D(tier).toNumber();
+            let name = D.lt(tier, tierNames.length) ? tierNames[D(tier).toNumber()] : "Reset "+format(tier);
             ctn.textContent = "×" + format(temp.sigilEffects[b], 2) + " all " + name + " gains";
 			if(b == 0 && game.unlocks.col1)ctn.textContent = "×" + format(temp.sigilEffects[b], 2) + " all " + name + "/Collapsed Layer gains";
         }

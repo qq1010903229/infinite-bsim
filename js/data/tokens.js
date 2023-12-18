@@ -30,13 +30,13 @@ let tokenUpgrades = {
     },
     double: {
         money: {
-            effectAmount: (x) => D.pow(2, x),
+            effectAmount: (x) => D.pow(2, D(x).mul(D.mul(0.2, game.tokenUpg.ext1.money_effective).add(1))),
             effectText: ["×{0}", "all Money gains"],
             effectPrecision: 0,
             costAmount: (x) => D.pow(3, x).mul(50),
         },
         gems: {
-            effectAmount: (x) => D.pow(2, x),
+            effectAmount: (x) => D.pow(2, D(x).mul(D.mul(0.1, game.tokenUpg.rune.upgEff).add(1))),
             effectText: ["×{0}", "all Gems gains"],
             effectPrecision: 0,
             costAmount: (x) => D.pow(5, x).mul(250),
@@ -65,7 +65,7 @@ let tokenUpgrades = {
         },
         upgEff: {
             effectAmount: (x) => D.mul(0.1, x).add(1),
-            effectText: ["×{0}", "effective gem token doublers"],
+            effectText: ["×{0}", "stronger gem token doubler"],
             maxAmount: 40,
             effectPrecision: 1,
             costAmount: (x) => D.pow(3, x).mul(1000),
@@ -122,12 +122,19 @@ let tokenUpgrades = {
             effectPrecision: 2,
             costAmount: (x) => D.pow(2.5, x).mul(1e40),
         },
+        money_effective: {
+            effectAmount: (x) => D.mul(0.2, x).add(1),
+            effectText: ["×{0}", "stronger money token doubler"],
+            effectPrecision: 1,
+            costAmount: (x) => D.pow(3, x).mul(1e50),
+        },
     },
 }
 
 function getTokenMulti() {
     let mult=D.add(temp.runeStats.token ?? 0, 1).mul(temp.tokenUpgEffects.tokens.gain);
 	if(game.unlocks.col3)mult=mult.mul(D(game.collapsed).div(75).pow(2).add(1));
+	if (game.unlocks.sig11)mult=mult.mul(temp.addSigilEffect1);
 	return mult;
 }
 

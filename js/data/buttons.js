@@ -532,6 +532,20 @@ let unlocks = {
         conDisplay: () => "≥" + format(3000) + " Collapsed Layers",
         execute: () => { game.ladder.pop(); game.automators.reset.depth=3;loadTab('buttons');updateTabVisibility(); },
     },
+    "btn9": {
+        requires: ["col14"],
+        desc: () => "Show Ordinal Button Numbers",
+        condition: () => D.gte(game.money, '1e5000000'),
+        conDisplay: () => "≥" + format('1e5000000') + " Money",
+        execute: () => { updateTabVisibility(); },
+    },
+    "sig11": {
+        requires: ["col14"],
+        desc: () => "Sigil boost Tokens",
+        condition: () => D.gte(game.money, '1e6900000'),
+        conDisplay: () => "≥" + format('1e6900000') + " Money",
+        execute: () => { updateTabVisibility(); },
+    },
 }
 let visibleUnlocks = [];
 

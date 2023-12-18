@@ -68,7 +68,7 @@ tabs.buttons = {
         for (let a = 0; a < game.ladder.length; a++) {
             let data = game.ladder[a];
             let row = this.data.rows[a];
-            let name = D.lt(data.tier, tierNames.length) ? tierNames[D(data.tier).toNumber()] : "Reset "+D(data.tier).toNumber();
+            let name = D.lt(data.tier, tierNames.length) ? tierNames[D(data.tier).toNumber()] : "Reset "+format(data.tier);
             row.style.setProperty("--background", tierColors[D(data.tier).toNumber()%tierColors.length]);
             row.amount.textContent = format(data.amount);
             row.name.textContent = name;
@@ -111,7 +111,8 @@ tabs.buttons = {
 				if (needsUpdate) {
                     button.gain.textContent = "+" + format(getButtonGain(data.tier, button.tier).mul(row.multi)) + " " + name;
                     button.cost.textContent = (a == 0 ? "−" : "≥") + format(cost) + " " + prevName;
-                    if (game.unlocks.btn6) button.setAttribute("mark", "#" + format(button.tier.add(1)));
+                    if (game.unlocks.btn9 && D(button.row).gt(0)) button.setAttribute("mark", "#(ω×" + format(button.row) + "+" + format(button.tier.add(1))+")");
+                    else if (game.unlocks.btn6) button.setAttribute("mark", "#" + format(button.tier.add(1)));
                 }
                 button.disabled = D.lt(a == 0 ? game.money : game.ladder[a - 1].amount, cost);
             }

@@ -75,7 +75,9 @@ tabs.colboost = {
 				if (needsUpdate) {
                     button.gain.textContent = "+" + format(getSuperButtonGain(data.tier, button.tier).mul(row.multi)) + " " + name;
                     button.cost.textContent = "≥" + format(cost) + " " + prevName;
-                    if (game.unlocks.btn6) button.setAttribute("mark", "#" + format(button.tier.add(1)));
+                    if (game.unlocks.btn9 && D(button.row).gt(0)) button.setAttribute("mark", "#(ω^2+ω×" + format(button.row) + "+" + format(button.tier.add(1))+")");
+                    else if (game.unlocks.btn9) button.setAttribute("mark", "#(ω^2+" + format(button.tier.add(1))+")");
+                    else if (game.unlocks.btn6) button.setAttribute("mark", "#" + format(button.tier.add(1)));
                 }
                 button.disabled = D.lt(a == 0 ? game.collapsed : game.super_ladder[a - 1].amount, cost);
             }
