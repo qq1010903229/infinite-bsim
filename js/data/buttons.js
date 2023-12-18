@@ -518,6 +518,13 @@ let unlocks = {
         conDisplay: () => "≥" + format('1e2000000') + " Money",
         execute: () => { updateTabVisibility(); },
     },
+    "rne13": {
+        requires: ["sbtn1"],
+        desc: () => "Improved Rune Effect III",
+        condition: () => D.gte(game.collapsed,2500),
+        conDisplay: () => "≥" + format(2500) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
 }
 let visibleUnlocks = [];
 

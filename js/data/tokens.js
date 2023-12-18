@@ -59,7 +59,7 @@ let tokenUpgrades = {
         genEff: {
             effectAmount: (x) => D.mul(0.1, x).add(1),
             effectText: ["^{0}", "effective gem generators"],
-            maxAmount: 90,
+            maxAmount: 140,
             effectPrecision: 1,
             costAmount: (x) => D.pow(3, x).mul(1000),
         },
