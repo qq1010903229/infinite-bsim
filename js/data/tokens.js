@@ -78,6 +78,14 @@ let tokenUpgrades = {
             effectPrecision: 1,
             costAmount: (x) => D.pow(3, x).mul(1e40),
         },
+        upgEff2: {
+            requires: ["tok6"],
+            effectAmount: (x) => D.mul(1, x).add(1),
+            effectText: ["×{0}", "stronger runes"],
+            maxAmount: 40,
+            effectPrecision: 1,
+            costAmount: (x) => D.pow(5, x).mul(1e50),
+        },
     },
     runeEff: {
         gem: {
@@ -117,9 +125,10 @@ let tokenUpgrades = {
             costAmount: (x) => D.add(7, x).pow(x).mul(1e40),
         },
         sigil: {
-            effectAmount: (x) => D.pow(0.95, x).mul(100),
+            effectAmount: (x) => D.pow(0.95, x).mul(100).min(D.sub(50, x).mul(2)).max(0),
             effectText: ["{0}%", "sigil effect softcap effect"],
             effectPrecision: 2,
+            maxAmount: 50,
             costAmount: (x) => D.pow(2.5, x).mul(1e40),
         },
         money_effective: {
@@ -127,6 +136,13 @@ let tokenUpgrades = {
             effectText: ["×{0}", "stronger money token doubler"],
             effectPrecision: 1,
             costAmount: (x) => D.pow(3, x).mul(1e50),
+        },
+        sigil_gen: {
+            requires: ["sig12"],
+            effectAmount: (x) => D.pow(3, x),
+            effectText: ["×{0}", "sigil generating speed"],
+            effectPrecision: 0,
+            costAmount: (x) => D.pow(2, x).mul(1e60),
         },
     },
 }

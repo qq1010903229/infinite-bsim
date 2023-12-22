@@ -37,7 +37,8 @@ let runeStats = {
     money: {
         display: "×{0} Money gain",
         get(q){
-			if(D(q).gte(500))q = D(q).div(5).log10().pow(2).mul(125);
+			if(D(q).gte(500) && !game.unlocks.rne16)q = D(q).div(5).log10().pow(2).mul(125);
+			else if(D(q).gte(1000))q = D(q).div(10).log10().pow(3).mul(125);
 			if(D(q).gte(2000))q = D(q).div(20).log10().pow(4).mul(125);
 			return D.pow(1.01, q);
 		},
@@ -65,6 +66,15 @@ let runeStats = {
     charge: {
         display: "+{0} base Charge gain",
         get: (q) => (game.unlocks.rne13?D(q):D.mul(game.unlocks.rne9?0.02:0.006, q).pow(1.2).min(q)),
+        precision: 2,
+        stack: "add",
+    },
+    super: {
+        display: "+{0} base Super Button gain",
+        get(q){
+			if(game.unlocks.rne16)return q.add(10).log10();
+			return q.add(10).log10().div(10);
+		},
         precision: 2,
         stack: "add",
     },
@@ -157,6 +167,7 @@ function generateRune(tier) {
     if (Math.random() * 100 < temp.tokenUpgEffects.runeEff.scrap) stats.push("scrap");
     if (Math.random() * 100 < temp.tokenUpgEffects.runeEff.token) stats.push("token");
     if (Math.random() * 100 < temp.tokenUpgEffects.runeEff.charge) stats.push("charge");
+    if (game.unlocks.rne15) stats.push("super");
     return {
         tier,
         rarity: D.div(1, 1 - Math.random()).ln().floor(),
@@ -166,10 +177,11 @@ function generateRune(tier) {
 }
 
 function getRuneQuality(rune) {
-	if(game.unlocks.rne13)return D.add(rune.tier, rune.rarity).add(10).pow(2).max(D(rune.tier).add(1).pow(2).mul(D(rune.rarity).add(1))).mul(D.add(rune.level, 2)).div(2);
-	if(game.unlocks.rne12)return D.add(rune.tier, rune.rarity).add(10).pow(2).max(D(rune.tier).add(1).pow(2).mul(D(rune.rarity).add(1))).mul(D.add(rune.level, 1).sqrt());
-	if(game.unlocks.rne8)return D.add(rune.tier, rune.rarity).add(10).pow(2).mul(D.add(rune.level, 1).sqrt());
-    return D.add(10, rune.tier).mul(D.add(rune.tier, rune.rarity).add(1)).mul(D.add(rune.level, 1).sqrt());
+	if(game.unlocks.rne14)return D.add(rune.tier, rune.rarity).add(10).pow(2).max(D(rune.tier).add(1).pow(2).mul(D(rune.rarity).add(1))).mul(D.add(rune.level, 1)).mul(temp.tokenUpgEffects.rune?.upgEff2 ?? 1);
+	if(game.unlocks.rne13)return D.add(rune.tier, rune.rarity).add(10).pow(2).max(D(rune.tier).add(1).pow(2).mul(D(rune.rarity).add(1))).mul(D.add(rune.level, 2)).div(2).mul(temp.tokenUpgEffects.rune?.upgEff2 ?? 1);
+	if(game.unlocks.rne12)return D.add(rune.tier, rune.rarity).add(10).pow(2).max(D(rune.tier).add(1).pow(2).mul(D(rune.rarity).add(1))).mul(D.add(rune.level, 1).sqrt()).mul(temp.tokenUpgEffects.rune?.upgEff2 ?? 1);
+	if(game.unlocks.rne8)return D.add(rune.tier, rune.rarity).add(10).pow(2).mul(D.add(rune.level, 1).sqrt()).mul(temp.tokenUpgEffects.rune?.upgEff2 ?? 1);
+    return D.add(10, rune.tier).mul(D.add(rune.tier, rune.rarity).add(1)).mul(D.add(rune.level, 1).sqrt()).mul(temp.tokenUpgEffects.rune?.upgEff2 ?? 1);
 }
 function getRuneScraps(rune) {
     return D.mul(D.pow(3, rune.tier), D.pow(2, rune.rarity)).mul(D.mul(3, rune.level).add(1)).mul(rune.stats.length).mul(5)

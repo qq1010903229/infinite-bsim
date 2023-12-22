@@ -546,6 +546,97 @@ let unlocks = {
         conDisplay: () => "≥" + format('1e6900000') + " Money",
         execute: () => { updateTabVisibility(); },
     },
+    "rne14": {
+        requires: ["col14"],
+        desc: () => "Improved Rune Effect IV",
+        condition: () => D.gte(game.collapsed,5000),
+        conDisplay: () => "≥" + format(5000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "sig12": {
+        requires: ["sig11"],
+        desc: () => "Glyphs generate All-Above sigil",
+        condition: () => D.gte(game.collapsed,7500),
+        conDisplay: () => "≥" + format(7500) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "sig13": {
+        requires: ["sig12"],
+        desc: () => "All-Above sigil generate Hypothetical sigil",
+        condition: () => D.gte(game.collapsed,8000),
+        conDisplay: () => "≥" + format(8000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "sig14": {
+        requires: ["sig13"],
+        desc: () => "Hypothetical sigil generate Supreme sigil",
+        condition: () => D.gte(game.collapsed,8500),
+        conDisplay: () => "≥" + format(8500) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "sig15": {
+        requires: ["sig14"],
+        desc: () => "Supreme sigil generate Mythical sigil ",
+        condition: () => D.gte(game.collapsed,9000),
+        conDisplay: () => "≥" + format(9000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "sig16": {
+        requires: ["sig15"],
+        desc: () => "Mythical sigil generate Unique sigil",
+        condition: () => D.gte(game.collapsed,9500),
+        conDisplay: () => "≥" + format(9500) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "rne15": {
+        requires: ["rne14"],
+        desc: () => "Runes boost Super Button gain",
+        condition: () => D.gte(game.collapsed,10000),
+        conDisplay: () => "≥" + format(10000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); for(var i in game.runes)game.runes[i].stats.push('super');for(var i in game.runeEquip)game.runeEquip[i].stats.push('super');},
+    },
+    "sig17": {
+        requires: ["sig16"],
+        desc: () => "Unique sigil generate Legendary sigil",
+        condition: () => D.gte(game.collapsed,10000),
+        conDisplay: () => "≥" + format(10000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "sig18": {
+        requires: ["sig17"],
+        desc: () => "Legendary sigil generate Epic sigil",
+        condition: () => D.gte(game.collapsed,11000),
+        conDisplay: () => "≥" + format(11000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "sig19": {
+        requires: ["sig18"],
+        desc: () => "Epic sigil generate Rare sigil",
+        condition: () => D.gte(game.collapsed,12000),
+        conDisplay: () => "≥" + format(12000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "sig20": {
+        requires: ["sig19"],
+        desc: () => "Rare sigil generate Uncommon Sigil",
+        condition: () => D.gte(game.collapsed,13500),
+        conDisplay: () => "≥" + format(13500) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "sig21": {
+        requires: ["sig20"],
+        desc: () => "Uncommon Sigil generate Common Sigil",
+        condition: () => D.gte(game.collapsed,15000),
+        conDisplay: () => "≥" + format(15000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "rne16": {
+        requires: ["rne15"],
+        desc: () => "Improved Rune Effect V",
+        condition: () => D.gte(game.collapsed,16666),
+        conDisplay: () => "≥" + format(16666) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
 }
 let visibleUnlocks = [];
 
@@ -571,8 +662,8 @@ function getRowMulti(row, index) {
 }
 function getSuperMulti(row, index) {
     index ??= game.super_ladder.findIndex(x => D.eq(x.tier, row));
-	if(index < 0)return D.add(getSuperAmount(D.add(row, 1)), 1);
-	return D.add(getSuperAmount(D.add(row, 1)), 1);
+	if(index < 0)return D.add(getSuperAmount(D.add(row, 1)), 1).mul(getSuperAllMult());
+	return D.add(getSuperAmount(D.add(row, 1)), 1).mul(getSuperAllMult());
 }
 function getButtonCost(row, tier) {
     let base = D.eq(row, 0) ? 5 : D.eq(row, 1) ? 1e5 : D.pow(2, row).mul(250);
@@ -879,6 +970,11 @@ function getCollapseMult() {
 function getAllMult() {
 	mult = D(game.super_ladder[0]?.amount ?? 0).add(1);
 	if(game.unlocks.tok7)mult = mult.mul(temp.tokenUpgEffects.double.money);
+	return mult;
+}
+
+function getSuperAllMult() {
+	mult = D(temp.runeStats?.super ?? 0).add(1);
 	return mult;
 }
 

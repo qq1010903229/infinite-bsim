@@ -16,19 +16,23 @@ function format(num, precision = 0) {
         let exp = num.log10().div(3).floor();
         let man = num.div(D.pow(1000, exp));
         return format.sig(man.toNumber(), 4) + " " + list[exp.toNumber()];
-    } else {
+    } else if (D.lt(num, "ee9")) {
         let exp = num.log10().floor();
         let man = num.div(D.pow(10, exp))
         return format.comma(man.toNumber(), 3) + "e" + format.comma(exp.toNumber());
-    }
+    } else {
+		return "e" + format(num.log10());
+	}
 }
 format.comma = function(num, precision = 0) {
+	if(D.gt(num, 1e9))return format(num, precision);
     return (+num).toLocaleString("en-US", {
         minimumFractionDigits: precision,
         maximumFractionDigits: precision,
     });
 }
 format.sig = function(num, precision = 0) {
+	if(D.gt(num, 1e9))return format(num, precision);
     return (+num).toLocaleString("en-US", {
         minimumSignificantDigits: precision,
         maximumSignificantDigits: precision,
