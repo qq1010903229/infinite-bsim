@@ -30,13 +30,13 @@ let tokenUpgrades = {
     },
     double: {
         money: {
-            effectAmount: (x) => D.pow(2, D(x).mul(D.mul(0.2, game.tokenUpg.ext1.money_effective).add(1))),
+            effectAmount: (x) => D.pow(2, D(x).mul(D.mul(0.2, game.tokenUpg.ext1?.money_effective ?? 0).add(1))),
             effectText: ["×{0}", "all Money gains"],
             effectPrecision: 0,
             costAmount: (x) => D.pow(3, x).mul(50),
         },
         gems: {
-            effectAmount: (x) => D.pow(2, D(x).mul(D.mul(0.1, game.tokenUpg.rune.upgEff).add(1))),
+            effectAmount: (x) => D.pow(2, D(x).mul(D.mul(0.1, game.tokenUpg.rune?.upgEff ?? 0).add(1))),
             effectText: ["×{0}", "all Gems gains"],
             effectPrecision: 0,
             costAmount: (x) => D.pow(5, x).mul(250),
