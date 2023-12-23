@@ -637,6 +637,20 @@ let unlocks = {
         conDisplay: () => "≥" + format(16666) + " Collapsed Layers",
         execute: () => { updateTabVisibility(); },
     },
+    "col15": {
+        requires: ["sig21","rne16"],
+        desc: () => "Super Buttons won't reset anything",
+        condition: () => D.gte(game.collapsed,25000),
+        conDisplay: () => "≥" + format(25000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "col16": {
+        requires: ["col15"],
+        desc: () => "Unlock Another Collapse Boost",
+        condition: () => D.gte(game.collapsed,27000),
+        conDisplay: () => "≥" + format(27000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
 }
 let visibleUnlocks = [];
 
@@ -745,14 +759,14 @@ function clickSuperButton(row, tier, auto = false) {
             data.level = D(0);
             data.presses = D.add(data.presses, 1);
 			game.tokens = D(game.collapsed).add(1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).mul(10000).mul(D(row).add(1).pow(temp.tokenUpgEffects.ext1?.superTierFactor ?? 1)).add(game.tokens);
-            game.collapsed = D(0);
-            for (let a = 0; a < game.ladder.length; a++) game.ladder[a] = {
+            if(!game.unlocks.col15)game.collapsed = D(0);
+            if(!game.unlocks.col15)for (let a = 0; a < game.ladder.length; a++) game.ladder[a] = {
 				tier: D(a), 
 				amount: D(0), 
 				level: D(0),
 				presses: D(0),
 			};
-			for (let a = 0; a < index; a++) game.super_ladder[a].amount = game.super_ladder[a].level = D(0);
+			if(!game.unlocks.col15)for (let a = 0; a < index; a++) game.super_ladder[a].amount = game.super_ladder[a].level = D(0);
             if (!auto) game.stats.presses++;
 			makeSuperRow(row);
         }
@@ -849,7 +863,7 @@ function checkEndgame() {
     desc.innerHTML = `
         You've purchased all the available unlocks currently in the game!<br/>
         However, it is not the end of the journey...<br/>
-        Collapse Boost is not implemented, make sure to stay tuned for future game updates!<br/>
+        Super-Collapse is not implemented, make sure to stay tuned for future game updates!<br/>
         <br/>
         Time played: <b>${format.time(game.stats.timePlayed)}</b><br/>
     `
@@ -929,6 +943,19 @@ function doResetAuto(times) {
         }
         break;
     }
+}
+
+function doSuperResetAuto(times) {
+    if (game.super_ladder.length <= 0) return;
+	for (let a = game.super_ladder.length - 1; a >= 1; a--) {
+		let row = game.super_ladder[a];
+		let pos = getHighestSuperButton(row.tier, game.super_ladder[a - 1].amount);
+		if (D.lt(pos, 0)) continue;
+		let gain = getSuperButtonGain(row.tier, pos);
+		row.amount = D.add(row.amount, D.mul(gain, times).mul(getSuperMulti(row.tier)));
+		row.presses = D.add(row.presses, times);
+		game.tokens = D(game.collapsed).add(1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).mul(10000).mul(D(row.tier).add(1).pow(temp.tokenUpgEffects.ext1?.superTierFactor ?? 1)).mul(times).add(game.tokens);
+	}
 }
 
 function getHighestButtonForCollapse(row, amount){

@@ -606,6 +606,15 @@ let automators = {
 			game.gemGens = D.max(game.gemGens,D(game.money).log10().sub(2).div(2).max(0).sqrt().add(1).floor())
 		},
     },
+    super_reset: {
+        title: "Super-Reset Automator",
+        requires: "col16",
+        levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(2, x)).mul(1e100),
+        speed: (x) => D.add(x, 1).div(1000).mul(getAutoSpeed()),
+        speedPrecision: 1,
+        consumption: (x) => D.add(x, 10).pow(D(x).div(2)).add(1),
+        fire: (x) => doSuperResetAuto(x),
+    },
 }
 
 function doChargerDrag(delta, dTime) {

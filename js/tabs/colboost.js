@@ -113,11 +113,13 @@ tabs.colboost = {
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 500 Collapsed Layers</li></ul>';return;
 		}
 		if(game.unlocks.col8){
-			tempHTML+='<li>Unlocked Super Buttons</li>';
+			tempHTML+='<li>Unlock Super Buttons</li>';
 		}else{
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 600 Collapsed Layers</li></ul>';return;
 		}
-		if(game.unlocks.col10){
+		if(game.unlocks.col15){
+			tempHTML+='<li>Super Buttons won\'t reset anything</li>';
+		}else if(game.unlocks.col10){
 			tempHTML+='<li>Super-Multi won\'t reset anything</li>';
 		}else{
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 900 Collapsed Layers</li></ul>';return;
@@ -137,10 +139,15 @@ tabs.colboost = {
 		}else{
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 1111 Collapsed Layers</li></ul>';return;
 		}
+		
+		if(game.unlocks.col16){
+			tempHTML+='<li>Unlock Super-Reset Automator</li>';
+		}else if(game.unlocks.col15){
+			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 27,000 Collapsed Layers</li></ul>';return;
+		}
+		
+		
         this.data.money.descInfo.innerHTML = tempHTML+'</ul>';
-		
-		
-		
     },
     onEnd() {
         this.data = null;
