@@ -86,6 +86,9 @@ function tick() {
         }
     }
 
+	if (game.unlocks.col18) {
+		game.collapsed = game.collapsed.max(getImCollapseLayers());
+	}
 	if (game.unlocks.sig21) {
 		game.sigils[0] = D(game.sigils[0]).add(D.mul(game.sigils[1], delta).mul(temp.tokenUpgEffects.ext1?.sigil_gen ?? 1));
 	}

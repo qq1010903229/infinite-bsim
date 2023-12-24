@@ -651,6 +651,41 @@ let unlocks = {
         conDisplay: () => "≥" + format(27000) + " Collapsed Layers",
         execute: () => { updateTabVisibility(); },
     },
+    "col17": {
+        requires: ["col16"],
+        desc: () => "Unlock Super Collapse",
+        condition: () => D.gte(game.collapsed,30000),
+        conDisplay: () => "≥" + format(30000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility();loadTab('buttons'); },
+    },
+    "sig22": {
+        requires: ["col17"],
+        desc: () => "Sigil boost Super Buttons",
+        condition: () => D.gte(game.collapsed,60000),
+        conDisplay: () => "≥" + format(60000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "col18": {
+        requires: ["sig22"],
+        desc: () => "Improve Collapse V",
+        condition: () => D.gte(game.collapsed,100000),
+        conDisplay: () => "≥" + format(100000) + " Collapsed Layers",
+        execute: () => { game.ladder.pop();game.ladder.pop();game.ladder.pop();updateTabVisibility();loadTab('buttons'); },
+    },
+    "rne17": {
+        requires: ["col18"],
+        desc: () => "Improved Rune Effect VI",
+        condition: () => D.gte(game.collapsed,150000),
+        conDisplay: () => "≥" + format(150000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "col19": {
+        requires: ["col18"],
+        desc: () => "Unlock Super Collapse Boost",
+        condition: () => D.gte(game.collapsed,200000),
+        conDisplay: () => "≥" + format(200000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
 }
 let visibleUnlocks = [];
 
@@ -677,6 +712,7 @@ function getRowMulti(row, index) {
 function getSuperMulti(row, index) {
     index ??= game.super_ladder.findIndex(x => D.eq(x.tier, row));
 	if(index < 0)return D.add(getSuperAmount(D.add(row, 1)), 1).mul(getSuperAllMult());
+	if(index == 0)return D.add(getSuperAmount(D.add(row, 1)), 1).mul(getSuperAllMult()).mul(getSuperCollapseMult());
 	return D.add(getSuperAmount(D.add(row, 1)), 1).mul(getSuperAllMult());
 }
 function getButtonCost(row, tier) {
@@ -734,7 +770,7 @@ function clickButton(row, tier, auto = false) {
 function clickSuperButton(row, tier, auto = false) {
     let index = game.super_ladder.findIndex(x => D.eq(x.tier, row));
     let data = game.super_ladder[index];
-    let cost = getSuperButtonCost(row, tier);
+	let cost = getSuperButtonCost(row, tier);
     if (index <= 0) {
         if (D.gte(game.collapsed, cost)) {
             game.money = 0;
@@ -774,6 +810,8 @@ function clickSuperButton(row, tier, auto = false) {
 }
 
 function makeRow(row) {
+	if(game.unlocks.col18)return;
+	row = D.min(row, 100002);
     let highest = game.ladder[game.ladder.length - 1] ?? {tier: -1};
     while (D.lte(highest.tier, row) && game.ladder.length < (game.unlocks.col14?4:game.unlocks.col13?5:game.unlocks.col12?7:10)) {
         highest = {
@@ -786,7 +824,7 @@ function makeRow(row) {
     }
 	if(D.lte(highest.tier, row) && game.ladder.length == 10 && game.unlocks.col1 && !game.unlocks.col9){
 		if(game.collapsed.gte(100) && !game.unlocks.col3)return;
-		game.collapsed = game.collapsed.add(1);
+		game.collapsed = D(game.collapsed).add(1);
 		for(let i = 2;i < 10; i++){
 			game.ladder[i-1]=game.ladder[i];
 		}
@@ -837,6 +875,27 @@ function makeSuperRow(row) {
         };
         game.super_ladder.push(highest);
     }
+	if(D.lte(highest.tier, row) && game.super_ladder.length == 10 && game.unlocks.col17){
+		if(game.scollapsed.gte(100) && !game.unlocks.col3)return;
+		game.scollapsed = D(game.scollapsed).add(1);
+		for(let i = 2;i < 10; i++){
+			game.super_ladder[i-1]=game.super_ladder[i];
+		}
+		highest = {
+            tier: D.add(highest.tier, 1), 
+            amount: D(0), 
+            level: D(0),
+            presses: D(0),
+        };
+		game.super_ladder[9]=highest;
+		updateRuneStats();
+		updateMilestoneStats();
+		updateAllChargerUpgEffects();
+		updateAutomationStats();
+		updateTokenStats();
+		updateSigilEffects();
+		allDirty = true;
+	}
 }
 
 function updateVisibleUnlocks() {
@@ -863,7 +922,7 @@ function checkEndgame() {
     desc.innerHTML = `
         You've purchased all the available unlocks currently in the game!<br/>
         However, it is not the end of the journey...<br/>
-        Super-Collapse is not implemented, make sure to stay tuned for future game updates!<br/>
+        Super-Collapse Boost is not implemented, make sure to stay tuned for future game updates!<br/>
         <br/>
         Time played: <b>${format.time(game.stats.timePlayed)}</b><br/>
     `
@@ -910,10 +969,16 @@ function doSuperMultiAuto(times) {
     row.presses = D.add(row.presses, times);
 	game.tokens = D(game.collapsed).add(1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).mul(10000).mul(times).add(game.tokens);
     game.super_ladder[0] = row;
+	updateRuneStats();
+	updateMilestoneStats();
+	updateAllChargerUpgEffects();
+	updateAutomationStats();
+	updateTokenStats();
+	updateSigilEffects();
 }
 
 function doResetAuto(times) {
-    if (game.ladder.length <= 0) return;
+    if (game.ladder.length <= 0 || game.unlocks.col18) return;
 	if(game.unlocks.btn8){
 		for (let a = (game.automators.reset?.depth ?? 1); a >= 1; a--) {
             let row = game.ladder[a];
@@ -955,6 +1020,7 @@ function doSuperResetAuto(times) {
 		row.amount = D.add(row.amount, D.mul(gain, times).mul(getSuperMulti(row.tier)));
 		row.presses = D.add(row.presses, times);
 		game.tokens = D(game.collapsed).add(1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).mul(10000).mul(D(row.tier).add(1).pow(temp.tokenUpgEffects.ext1?.superTierFactor ?? 1)).mul(times).add(game.tokens);
+		makeSuperRow(row.tier);
 	}
 }
 
@@ -1002,6 +1068,7 @@ function getAllMult() {
 
 function getSuperAllMult() {
 	mult = D(temp.runeStats?.super ?? 0).add(1);
+	mult = mult.mul(temp.addSigilEffect2 ?? 1);
 	return mult;
 }
 
@@ -1013,7 +1080,21 @@ function getButtonGainForImCollapse(tier) {
     return D.pow(4, D.pow(1.05, tier).sub(1).mul(20)).mul(D(game.collapsed).add(100));
 }
 
+function getImCollapsePoint() {
+	return getButtonGainForImCollapse(getHighestButtonForImCollapse(game.ladder[0].amount)).mul(temp.sigilEffects[0]).mul(getAllMult()).mul(game.unlocks.rne6?(temp.runeStats.money ?? 1):1);
+}
+
+function getImCollapsePoint2() {
+	return getButtonGainForImCollapse(getHighestButtonForImCollapse(getImCollapsePoint())).mul(temp.sigilEffects[0]).mul(getAllMult()).mul(game.unlocks.rne6?(temp.runeStats.money ?? 1):1);
+}
+
+function getImCollapseLayers() {
+	return getImCollapsePoint2().add(3).logBase(2).mul(getImCollapsePoint2().add(3).logBase(2).add(3).logBase(2).pow(2).div(934).min(1)).max(100000);//.max(getImCollapsePoint().add(3).logBase(2).pow(getImCollapsePoint().add(3).logBase(2).add(3).logBase(2).div(45).min(1)));
+}
+
 function getImCollapseMult() {
+	if(game.unlocks.col18)return D(getImCollapsePoint()).add(1).pow(D(game.collapsed).add(1));
+	if(D(game.collapsed).gte(100000))return D(game.ladder[1].amount).add(1).mul(temp.sigilEffects[0]).mul(getAllMult()).mul(game.unlocks.rne6?(temp.runeStats.money ?? 1):1).pow(D(game.collapsed).add(1));
 	let m = game.ladder[0].amount, mult = D(1);
     if(game.collapsed.lt(100)){
 		for(let i = 1;i <= game.collapsed.toNumber();i++){
@@ -1029,7 +1110,10 @@ function getImCollapseMult() {
 	return mult.mul(m.pow(D(game.collapsed).sub(100))).mul(D(game.ladder[1].amount).add(1));
 }
 
-
+function getSuperCollapseMult() {
+	if(game.scollapsed.lt(0))return D(1);
+	return D(game.super_ladder[1].amount).add(1).mul(getSuperAllMult()).pow(D(game.scollapsed).add(1));
+}
 function getSuperButtonCost(row, tier) {
 	if(D(row).eq(0) && game.unlocks.sbtn1)return D.pow(1.1, tier).sub(1).mul(10);
     let base = D.eq(row, 0) ? 5 : D.eq(row, 1) ? 1e5 : D.pow(2, row).mul(250);

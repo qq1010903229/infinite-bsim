@@ -18,6 +18,7 @@ let tokenUpgrades = {
             effectAmount: (x) => D.mul(0.05, x).add(0.5),
             effectText: ["^{0}", "button tier to Token multi"],
             effectPrecision: 2,
+            maxAmount: 500,
             costAmount: (x) => D.add(7, x).pow(x).mul(1250),
         },
         gainFromCharge: {
@@ -82,7 +83,7 @@ let tokenUpgrades = {
             requires: ["tok6"],
             effectAmount: (x) => D.mul(1, x).add(1),
             effectText: ["×{0}", "stronger runes"],
-            maxAmount: 40,
+            maxAmount: 99,
             effectPrecision: 1,
             costAmount: (x) => D.pow(5, x).mul(1e50),
         },

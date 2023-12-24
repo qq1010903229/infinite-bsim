@@ -38,7 +38,8 @@ let runeStats = {
         display: "×{0} Money gain",
         get(q){
 			if(D(q).gte(500) && !game.unlocks.rne16)q = D(q).div(5).log10().pow(2).mul(125);
-			else if(D(q).gte(1000))q = D(q).div(10).log10().pow(3).mul(125);
+			else if(D(q).gte(1000) && !game.unlocks.rne17)q = D(q).div(10).log10().pow(3).mul(125);
+			else if(D(q).gte(4000))q = D(q).div(40).log10().pow(5).mul(125);
 			if(D(q).gte(2000))q = D(q).div(20).log10().pow(4).mul(125);
 			return D.pow(1.01, q);
 		},
@@ -72,6 +73,7 @@ let runeStats = {
     super: {
         display: "+{0} base Super Button gain",
         get(q){
+			if(game.unlocks.rne17)return q.sqrt().div(100).max(q.add(10).log10());
 			if(game.unlocks.rne16)return q.add(10).log10();
 			return q.add(10).log10().div(10);
 		},
@@ -95,6 +97,7 @@ function getGemUpgCost(tier) {
 }
 function getEqUpgCost(tier) {
     tier = D(tier ?? 0).add(2);
+	if(tier.gte(40))tier = tier.pow(3).div(1600);
     return D.pow(1e5, tier);
 }
 function getInvUpgCost(tier) {

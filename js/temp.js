@@ -117,6 +117,7 @@ function updateSigilEffects() {
     }
 	
 	if (game.unlocks.sig11)temp.addSigilEffect1 = temp.sigilEffects[0].add(10).log10().sqrt();
+	if (game.unlocks.sig22)temp.addSigilEffect2 = temp.sigilEffects[0].add(10).log10().add(10).log10().pow(2);
 		
 	if (game.unlocks.sig10) {
 		for (let a = game.sigils.length - 1; a >= 1; a--) {

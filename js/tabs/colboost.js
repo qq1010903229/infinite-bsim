@@ -24,13 +24,13 @@ tabs.colboost = {
     },
     onTick() {
 		
-        while (this.data.rows.length < game.super_ladder.length) {
+        if(!game.unlocks.col17)while (this.data.rows.length < game.super_ladder.length) {
             let row = createRow();
             container.append(row);
             this.data.rows.push(row);
         }
         let prevName = "Collapsed Layers";
-        for (let a = 0; a < game.super_ladder.length; a++) {
+        if(!game.unlocks.col17)for (let a = 0; a < game.super_ladder.length; a++) {
             let data = game.super_ladder[a];
             let row = this.data.rows[a];
             let name = D.lt(data.tier, tierNames.length) ? "Super-"+tierNames[D(data.tier).toNumber()] : "Super-Reset "+D(data.tier).toNumber();
@@ -130,7 +130,9 @@ tabs.colboost = {
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 1000 Collapsed Layers</li></ul>';return;
 		}
 		
-		if(game.unlocks.col14){
+		if(game.unlocks.col18){
+			tempHTML+='<li>-9 uncollapsed layers</li>';
+		}else if(game.unlocks.col14){
 			tempHTML+='<li>-6 uncollapsed layers</li>';
 		}else if(game.unlocks.col13){
 			tempHTML+='<li>-5 uncollapsed layers</li>';
