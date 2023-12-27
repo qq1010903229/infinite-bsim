@@ -30,3 +30,9 @@ function forgeSigil(cooldown = 200, amount = 1) {
         updateSigilEffects();
     }
 }
+
+function getSigilMult(){
+	let mult = (temp.tokenUpgEffects.ext1?.sigil_gen ?? 1);
+	if(game.unlocks.col20)mult = mult.mul(D(game.collapsed).pow(5).add(1));
+	return mult;
+}

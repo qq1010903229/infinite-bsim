@@ -18,7 +18,7 @@ let tokenUpgrades = {
             effectAmount: (x) => D.mul(0.05, x).add(0.5),
             effectText: ["^{0}", "button tier to Token multi"],
             effectPrecision: 2,
-            maxAmount: 500,
+            maxAmount: 50,
             costAmount: (x) => D.add(7, x).pow(x).mul(1250),
         },
         gainFromCharge: {
@@ -60,7 +60,7 @@ let tokenUpgrades = {
         genEff: {
             effectAmount: (x) => D.mul(0.1, x).add(1),
             effectText: ["^{0}", "effective gem generators"],
-            maxAmount: 190,
+            maxAmount: 240,
             effectPrecision: 1,
             costAmount: (x) => D.pow(3, x).mul(1000),
         },

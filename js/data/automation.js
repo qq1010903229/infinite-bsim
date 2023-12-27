@@ -539,13 +539,17 @@ let automators = {
         speedPrecision: 1,
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
         fire(x){
+			if (game.runes.length + game.runeEquip.length >= temp.maxRunes)return;
 			let tier = D(game.automators.rune?.tier ?? 1).sub(1);
 			let cost = getRuneCost(tier);
 			let b=1;
-			x = x.toNumber();
-			while (D.gte(game.gems, cost) && game.runes.length + game.runeEquip.length < temp.maxRunes && x > 0) {
+			let level = x.add(1).div(15).logBase(5).min((temp.maxRunes - game.runes.length - game.runeEquip.length - 1)/4).min(game.gems.div(cost).max(1).logBase(5)).max(0).floor().toNumber(); 
+			x = x.div(D.pow(5,level)).toNumber();
+			cost = cost.mul(D.pow(5,level));
+			while (D.gte(game.gems, cost) && game.runes.length + game.runeEquip.length < temp.maxRunes - level * 4 && x > 0) {
 				game.gems = D.sub(game.gems, cost);
 				let rune = generateRune(tier);
+				rune.level = level;
 				game.runes.push(rune);
 				game.stats.runeBought++;
 				b=1;
@@ -740,5 +744,6 @@ function getAutoSpeed(){
 	let gain = D(1);
 	if(game.unlocks.col9)gain = gain.mul(100);
 	else if(game.unlocks.col2)gain = gain.mul(D(game.collapsed).pow(0.75).add(1).min(100));
+	if(game.unlocks.col19)gain = gain.mul(D(game.scollapsed).pow(0.75).add(1).min(100));
 	return gain;
 }

@@ -686,6 +686,20 @@ let unlocks = {
         conDisplay: () => "≥" + format(200000) + " Collapsed Layers",
         execute: () => { updateTabVisibility(); },
     },
+    "col20": {
+        requires: ["col19"],
+        desc: () => "Unlock Another Collapse Boost",
+        condition: () => D.gte(game.collapsed,250000),
+        conDisplay: () => "≥" + format(250000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "sig23": {
+        requires: ["col20"],
+        desc: () => "Improve Sigil I",
+        condition: () => D.gte(game.collapsed,270000),
+        conDisplay: () => "≥" + format(270000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
 }
 let visibleUnlocks = [];
 
@@ -1111,7 +1125,7 @@ function getImCollapseMult() {
 }
 
 function getSuperCollapseMult() {
-	if(game.scollapsed.lt(0))return D(1);
+	if(game.scollapsed.lte(0))return D(1);
 	return D(game.super_ladder[1].amount).add(1).mul(getSuperAllMult()).pow(D(game.scollapsed).add(1));
 }
 function getSuperButtonCost(row, tier) {

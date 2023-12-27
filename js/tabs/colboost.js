@@ -17,7 +17,18 @@ tabs.colboost = {
         moneyRow.append(detailsInfo);
         this.data.money = moneyRow;
         container.append(moneyRow);
-        this.data.money.append(extraButtons);
+		
+		if(game.unlocks.col19){
+			moneyRow = createRow();
+			moneyRow.name.textContent = "Collapsed Super Layers";
+			detailsInfo = document.createElement("div");
+			moneyRow.classList.add("rune-details");
+			detailsInfo.classList.add("desc-info");
+			moneyRow.descInfo = detailsInfo;
+			moneyRow.append(detailsInfo);
+			this.data.money2 = moneyRow;
+			container.append(moneyRow);
+		}
 
         updateVisibleUnlocks();
         this.onTick();
@@ -92,7 +103,9 @@ tabs.colboost = {
 		}else{
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 100 Collapsed Layers</li></ul>';return;
 		}
-		if(game.unlocks.col4){
+		if(game.unlocks.col19){
+			// collapse boost removed
+		}else if(game.unlocks.col4){
 			tempHTML+='<li>×'+format(D(game.collapsed).div(10).pow(game.unlocks.col14?15:game.unlocks.col13?12:game.unlocks.col12?10:game.unlocks.col11?8:game.unlocks.col10?7:game.unlocks.col9?6:game.unlocks.col7?5:game.unlocks.col6?4:game.unlocks.col5?3:2).add(1),2)+' Sigil Automator Speed</li>';
 		}else{
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 150 Collapsed Layers</li></ul>';return;
@@ -148,8 +161,19 @@ tabs.colboost = {
 			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 27,000 Collapsed Layers</li></ul>';return;
 		}
 		
+		if(game.unlocks.col20){
+			tempHTML+='<li>×'+format(D(game.collapsed).pow(5).add(1),2)+' Sigil Generating Speed</li>';
+		}else if(game.unlocks.col19){
+			this.data.money.descInfo.innerHTML = tempHTML+'<li>Next at 250,000 Collapsed Layers</li></ul>';return;
+		}
 		
         this.data.money.descInfo.innerHTML = tempHTML+'</ul>';
+		
+		if(game.unlocks.col19){
+			this.data.money2.amount.textContent = format(game.scollapsed);
+			let tempHTML='<ul><li>×'+format(D(game.scollapsed).pow(0.75).add(1).min(100),2)+' Automation Speed</li>';
+			this.data.money2.descInfo.innerHTML = tempHTML+'</ul>';
+		}
     },
     onEnd() {
         this.data = null;

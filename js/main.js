@@ -90,34 +90,34 @@ function tick() {
 		game.collapsed = game.collapsed.max(getImCollapseLayers());
 	}
 	if (game.unlocks.sig21) {
-		game.sigils[0] = D(game.sigils[0]).add(D.mul(game.sigils[1], delta).mul(temp.tokenUpgEffects.ext1?.sigil_gen ?? 1));
+		game.sigils[0] = D(game.sigils[0]).add(D.mul(game.sigils[1], delta).mul(getSigilMult()));
 	}
 	if (game.unlocks.sig20) {
-		game.sigils[1] = D(game.sigils[1]).add(D.mul(game.sigils[2], delta).mul(temp.tokenUpgEffects.ext1?.sigil_gen ?? 1));
+		game.sigils[1] = D(game.sigils[1]).add(D.mul(game.sigils[2], delta).mul(getSigilMult()));
 	}
 	if (game.unlocks.sig19) {
-		game.sigils[2] = D(game.sigils[2]).add(D.mul(game.sigils[3], delta).mul(temp.tokenUpgEffects.ext1?.sigil_gen ?? 1));
+		game.sigils[2] = D(game.sigils[2]).add(D.mul(game.sigils[3], delta).mul(getSigilMult()));
 	}
 	if (game.unlocks.sig18) {
-		game.sigils[3] = D(game.sigils[3]).add(D.mul(game.sigils[4], delta).mul(temp.tokenUpgEffects.ext1?.sigil_gen ?? 1));
+		game.sigils[3] = D(game.sigils[3]).add(D.mul(game.sigils[4], delta).mul(getSigilMult()));
 	}
 	if (game.unlocks.sig17) {
-		game.sigils[4] = D(game.sigils[4]).add(D.mul(game.sigils[5], delta).mul(temp.tokenUpgEffects.ext1?.sigil_gen ?? 1));
+		game.sigils[4] = D(game.sigils[4]).add(D.mul(game.sigils[5], delta).mul(getSigilMult()));
 	}
 	if (game.unlocks.sig16) {
-		game.sigils[5] = D(game.sigils[5]).add(D.mul(game.sigils[6], delta).mul(temp.tokenUpgEffects.ext1?.sigil_gen ?? 1));
+		game.sigils[5] = D(game.sigils[5]).add(D.mul(game.sigils[6], delta).mul(getSigilMult()));
 	}
 	if (game.unlocks.sig15) {
-		game.sigils[6] = D(game.sigils[6]).add(D.mul(game.sigils[7], delta).mul(temp.tokenUpgEffects.ext1?.sigil_gen ?? 1));
+		game.sigils[6] = D(game.sigils[6]).add(D.mul(game.sigils[7], delta).mul(getSigilMult()));
 	}
 	if (game.unlocks.sig14) {
-		game.sigils[7] = D(game.sigils[7]).add(D.mul(game.sigils[8], delta).mul(temp.tokenUpgEffects.ext1?.sigil_gen ?? 1));
+		game.sigils[7] = D(game.sigils[7]).add(D.mul(game.sigils[8], delta).mul(getSigilMult()));
 	}
 	if (game.unlocks.sig13) {
-		game.sigils[8] = D(game.sigils[8]).add(D.mul(game.sigils[9], delta).mul(temp.tokenUpgEffects.ext1?.sigil_gen ?? 1));
+		game.sigils[8] = D(game.sigils[8]).add(D.mul(game.sigils[9], delta).mul(getSigilMult()));
 	}
 	if (game.unlocks.sig12) {
-		game.sigils[9] = D(game.sigils[9]).add(D.mul(game.scraps, delta).mul(temp.tokenUpgEffects.ext1?.sigil_gen ?? 1));
+		game.sigils[9] = D(game.sigils[9]).add(D.mul(game.scraps, delta).mul(getSigilMult()));
         updateSigilEffects();
 	}
     allDirty = false;
