@@ -936,7 +936,7 @@ function checkEndgame() {
     desc.innerHTML = `
         You've purchased all the available unlocks currently in the game!<br/>
         However, it is not the end of the journey...<br/>
-        Super-Collapse Boost is not implemented, make sure to stay tuned for future game updates!<br/>
+        There are more Token upgrades, make sure to stay tuned for future game updates!<br/>
         <br/>
         Time played: <b>${format.time(game.stats.timePlayed)}</b><br/>
     `
