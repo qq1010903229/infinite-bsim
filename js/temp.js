@@ -32,7 +32,8 @@ function updateTemp() {
     temp.gemSpeed = D.add(game.unlocks.rne10?D.pow(3,D.mul(game.gemUpgs,temp.tokenUpgEffects.rune?.upgEff1 ?? 1)):D.mul(game.gemUpgs,temp.tokenUpgEffects.rune?.upgEff1 ?? 1), 1).mul(D.add(temp.runeStats.gem ?? 0, 1))
     .mul(D.pow(game.gemGens, temp.tokenUpgEffects.rune.genEff))
       .mul(temp.tokenUpgEffects.double.gems)
-		  .mul(game.unlocks.col7?D(game.collapsed).div(300).add(1).pow(3):1);
+		  .mul(game.unlocks.col7?D(game.collapsed).div(300).add(1).pow(3):1)
+		  .mul(game.unlocks.sig24?(temp.addSigilEffect1 ?? 1):1);
 
     temp.skillLevel = game.ladder.reduce((a, b) => D.add(a, b.level), 0);
 	 
@@ -111,15 +112,18 @@ function updateSigilEffects() {
     temp.sigilPoints = D(0);
     temp.sigilEffects = {};
     for (let a = game.sigils.length - 1; a >= 0; a--) {
-		if (game.unlocks.sig23)temp.sigilEffects[a] = multi = D(game.sigils[a]).mul(a * a).add(1).pow(2).mul(multi);
+		if (game.unlocks.sig24)temp.sigilEffects[a] = multi = D(game.sigils[a]).mul(a * a).add(1).pow(2.5).mul(multi);
+        else if (game.unlocks.sig23)temp.sigilEffects[a] = multi = D(game.sigils[a]).mul(a * a).add(1).pow(2).mul(multi);
         else temp.sigilEffects[a] = multi = D.mul(game.sigils[a], 0.05).mul(a + 1).add(1).mul(multi);
 		if(temp.sigilEffects[a].gte(1e36) && !game.unlocks.sig23)temp.sigilEffects[a]=D.pow(10,temp.sigilEffects[a].log10().div(36).pow(D(0.5).pow(D.mul(0.01,temp.tokenUpgEffects.ext1?.sigil ?? 100))).mul(36));
         temp.sigilPoints = D.pow(2, a).mul(game.sigils[a]).add(temp.sigilPoints);
     }
 	
-	if (game.unlocks.sig23)temp.addSigilEffect1 = temp.sigilEffects[0].add(10).log10().pow(0.75);
+	if (game.unlocks.sig24)temp.addSigilEffect1 = temp.sigilEffects[0].add(10).log10();
+	else if (game.unlocks.sig23)temp.addSigilEffect1 = temp.sigilEffects[0].add(10).log10().pow(0.75);
 	else if (game.unlocks.sig11)temp.addSigilEffect1 = temp.sigilEffects[0].add(10).log10().sqrt();
-	if (game.unlocks.sig23)temp.addSigilEffect2 = temp.sigilEffects[0].add(10).log10().sqrt();
+	if (game.unlocks.sig24)temp.addSigilEffect2 = temp.sigilEffects[0].add(10).log10().pow(0.6);
+	else if (game.unlocks.sig23)temp.addSigilEffect2 = temp.sigilEffects[0].add(10).log10().sqrt();
 	else if (game.unlocks.sig22)temp.addSigilEffect2 = temp.sigilEffects[0].add(10).log10().add(10).log10().pow(2);
 		
 	if (game.unlocks.sig10) {

@@ -700,6 +700,48 @@ let unlocks = {
         conDisplay: () => "≥" + format(270000) + " Collapsed Layers",
         execute: () => { updateTabVisibility(); },
     },
+    "tok8": {
+        requires: ["sig23"],
+        desc: () => "Unlock More Token Upgrades",
+        condition: () => D.gte(game.collapsed,300000),
+        conDisplay: () => "≥" + format(300000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "atm14": {
+        requires: ["tok8"],
+        desc: () => "Unlock Rune Autoequipper",
+        condition: () => D.gte(game.collapsed,400000),
+        conDisplay: () => "≥" + format(400000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "col21": {
+        requires: ["col19"],
+        desc: () => "Unlock Another Super Collapse Boost",
+        condition: () => D.gte(game.scollapsed,60),
+        conDisplay: () => "≥" + format(60) + " Collapsed Super Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "mle3": {
+        requires: ["atm14"],
+        desc: () => "Improved Milestone II",
+        condition: () => D.gte(game.collapsed,500000),
+        conDisplay: () => "≥" + format(500000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "sig24": {
+        requires: ["mle3"],
+        desc: () => "Improve Sigil II",
+        condition: () => D.gte(game.collapsed,600000),
+        conDisplay: () => "≥" + format(600000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
+    "rne18": {
+        requires: ["sig24"],
+        desc: () => "Improved Rune Effect VII",
+        condition: () => D.gte(game.collapsed,700000),
+        conDisplay: () => "≥" + format(700000) + " Collapsed Layers",
+        execute: () => { updateTabVisibility(); },
+    },
 }
 let visibleUnlocks = [];
 
@@ -790,7 +832,7 @@ function clickSuperButton(row, tier, auto = false) {
             game.money = 0;
             data.amount = getSuperButtonGain(row, tier).mul(getSuperMulti(row, index)).add(data.amount);
             data.presses = D.add(data.presses, 1);
-			game.tokens = D(game.collapsed).add(1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).mul(10000).add(game.tokens);
+			game.tokens = D(game.collapsed).add(1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).mul(10000).mul(temp.tokenUpgEffects.tokens?.gainFromSuper ?? 1).add(game.tokens);
 			if(!game.unlocks.col10)game.collapsed = D(0);
             if(!game.unlocks.col10)for (let a = 0; a < game.ladder.length; a++) game.ladder[a] = {
 				tier: D(a), 
@@ -808,7 +850,7 @@ function clickSuperButton(row, tier, auto = false) {
             data.amount = getSuperButtonGain(row, tier).mul(getSuperMulti(row)).add(data.amount);
             data.level = D(0);
             data.presses = D.add(data.presses, 1);
-			game.tokens = D(game.collapsed).add(1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).mul(10000).mul(D(row).add(1).pow(temp.tokenUpgEffects.ext1?.superTierFactor ?? 1)).add(game.tokens);
+			game.tokens = D(game.collapsed).add(1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).mul(10000).mul(D(row).add(1).pow(temp.tokenUpgEffects.ext1?.superTierFactor ?? 1)).mul(temp.tokenUpgEffects.tokens?.gainFromSuper ?? 1).add(game.tokens);
             if(!game.unlocks.col15)game.collapsed = D(0);
             if(!game.unlocks.col15)for (let a = 0; a < game.ladder.length; a++) game.ladder[a] = {
 				tier: D(a), 
@@ -981,7 +1023,7 @@ function doSuperMultiAuto(times) {
     let gain = getSuperButtonGain(row.tier, pos);
     row.amount = D.add(row.amount, D.mul(gain, times).mul(getSuperMulti(row.tier)));
     row.presses = D.add(row.presses, times);
-	game.tokens = D(game.collapsed).add(1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).mul(10000).mul(times).add(game.tokens);
+	game.tokens = D(game.collapsed).add(1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).mul(10000).mul(temp.tokenUpgEffects.tokens?.gainFromSuper ?? 1).mul(times).add(game.tokens);
     game.super_ladder[0] = row;
 	updateRuneStats();
 	updateMilestoneStats();
@@ -1033,7 +1075,7 @@ function doSuperResetAuto(times) {
 		let gain = getSuperButtonGain(row.tier, pos);
 		row.amount = D.add(row.amount, D.mul(gain, times).mul(getSuperMulti(row.tier)));
 		row.presses = D.add(row.presses, times);
-		game.tokens = D(game.collapsed).add(1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).mul(10000).mul(D(row.tier).add(1).pow(temp.tokenUpgEffects.ext1?.superTierFactor ?? 1)).mul(times).add(game.tokens);
+		game.tokens = D(game.collapsed).add(1).pow(temp.tokenUpgEffects.tokens.normalTierFactor).mul(getTokenMulti()).mul(10000).mul(D(row.tier).add(1).pow(temp.tokenUpgEffects.ext1?.superTierFactor ?? 1)).mul(temp.tokenUpgEffects.tokens?.gainFromSuper ?? 1).mul(times).add(game.tokens);
 		makeSuperRow(row.tier);
 	}
 }
@@ -1083,6 +1125,7 @@ function getAllMult() {
 function getSuperAllMult() {
 	mult = D(temp.runeStats?.super ?? 0).add(1);
 	mult = mult.mul(temp.addSigilEffect2 ?? 1);
+	if(game.unlocks.tok8)mult = mult.mul(temp.tokenUpgEffects.double?.super ?? 1);
 	return mult;
 }
 

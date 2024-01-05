@@ -85,7 +85,7 @@ tabs.sigils = {
             ctn.amount.textContent = "×" + format(game.sigils[b]);
         }
         
-        while (this.data.details.items.length < (game.unlocks.sig22?3:game.unlocks.sig11?2:game.unlocks.sig10?1:game.sigils.length)) {
+        while (this.data.details.items.length < (game.unlocks.sig24?5:game.unlocks.sig22?3:game.unlocks.sig11?2:game.unlocks.sig10?1:game.sigils.length)) {
             let ctn = document.createElement("li");
             this.data.details.descInfo.append(ctn);
             this.data.details.items.push(ctn);
@@ -97,6 +97,12 @@ tabs.sigils = {
         }
 		if (game.unlocks.sig22){
 			this.data.details.items[2].textContent = "×" + format(temp.addSigilEffect2 ?? 1, 2) + " all super button gains";
+        }
+		if (game.unlocks.sig24){
+			this.data.details.items[3].textContent = "×" + format(temp.addSigilEffect1 ?? 1, 2) + " all Gem gains";
+        }
+		if (game.unlocks.sig24){
+			this.data.details.items[4].textContent = "×" + format(temp.addSigilEffect1 ?? 1, 2) + " all Glyph gains";
         }
 		if (game.unlocks.sig10){
 			this.data.details.items[0].textContent = "×" + format(temp.sigilEffects[0], 2) + " all button gains";

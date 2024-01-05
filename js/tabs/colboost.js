@@ -96,6 +96,21 @@ tabs.colboost = {
             prevName = name;
         }
 		
+		
+		if(game.unlocks.col19){
+			this.data.money2.amount.textContent = format(game.scollapsed);
+			let tempHTML='<ul><li>×'+format(D(game.scollapsed).pow(0.75).add(1).min(100),2)+' Automation Speed</li>';
+			
+			if(game.unlocks.col21){
+				tempHTML+='<li>×'+format(D(game.scollapsed).add(1).pow(3).div(1e4),2)+' Tokens</li>';
+			}else if(game.unlocks.col20){
+				tempHTML+='<li>Next at 60 Collapsed Super Layers</li>';
+			}
+			
+			this.data.money2.descInfo.innerHTML = tempHTML+'</ul>';
+		}
+		
+		
         this.data.money.amount.textContent = format(game.collapsed);
 		let tempHTML='<ul><li>×'+format(game.unlocks.col9?100:D(game.collapsed).pow(0.75).add(1).min(100),2)+' Automation Speed</li>';
 		if(game.unlocks.col3){
@@ -169,11 +184,6 @@ tabs.colboost = {
 		
         this.data.money.descInfo.innerHTML = tempHTML+'</ul>';
 		
-		if(game.unlocks.col19){
-			this.data.money2.amount.textContent = format(game.scollapsed);
-			let tempHTML='<ul><li>×'+format(D(game.scollapsed).pow(0.75).add(1).min(100),2)+' Automation Speed</li>';
-			this.data.money2.descInfo.innerHTML = tempHTML+'</ul>';
-		}
     },
     onEnd() {
         this.data = null;

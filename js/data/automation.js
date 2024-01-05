@@ -197,6 +197,7 @@ let automators = {
             .mul(game.automators.scrap.tier ?? 1),
         fire: function(x){
 			let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, D(game.automators.scrap.tier ?? 1).sub(1))).mul(game.unlocks.col5?D(game.collapsed).div(10):1)
+		  .mul(game.unlocks.sig24?(temp.addSigilEffect1 ?? 1):1)
 			let cost = getRuneCost(D(game.automators.scrap.tier ?? 1).sub(1));
 			let count = game.gems.div(cost).floor().min(x)
 			game.scraps = D.add(game.scraps,count.mul(gain))
@@ -351,7 +352,8 @@ let automators = {
 					parent.tier.button.disabled = maxtier >= 29 || D.lt(game.charge, tierCost);
 					parent.tier.cost.textContent = maxtier >= 29 ? "Maxed out" : "−" + format(tierCost) + " Charge";
 				}else{
-					let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, D(game.automators.scrap.tier ?? 1).sub(1))).mul(game.unlocks.col5?D(game.collapsed).div(10):1).mul(automators.scrap.speed(game.automators.scrap.active));
+					let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, D(game.automators.scrap.tier ?? 1).sub(1))).mul(game.unlocks.col5?D(game.collapsed).div(10):1)
+		  .mul(game.unlocks.sig24?(temp.addSigilEffect1 ?? 1):1).mul(automators.scrap.speed(game.automators.scrap.active));
 					let cost = getRuneCost(D(game.automators.scrap.tier ?? 1).sub(1)).mul(automators.scrap.speed(game.automators.scrap.active));
 					this.details.textContent = "-"+format(cost)+" Gems/s, +"+format(gain)+" Glyphs/s, ×" + format(D(game.automators.scrap.tier ?? 1)) + " consumption";
 				}
@@ -367,6 +369,7 @@ let automators = {
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
         fire: function(x){
 			x = x.toNumber();
+			if(game.unlocks.mle3)x=1;
 			for(let i=0;i<x;i++){
 				for(let j in milestones.global)clickGlobalMilestone(j);
 			}
@@ -618,6 +621,28 @@ let automators = {
         speedPrecision: 1,
         consumption: (x) => D.add(x, 10).pow(D(x).div(2)).add(1),
         fire: (x) => doSuperResetAuto(x),
+    },
+    equip: {
+        title: "Rune Autoequipper",
+        requires: "atm14",
+        levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(2, x)).mul(1e200),
+        speed: (x) => D.add(x, 1).div(10000).mul(getAutoSpeed()),
+        speedPrecision: 1,
+        consumption: (x) => D.add(x, 1).add(1),
+        fire(x){
+			let b=0;
+			for(let i=0;i<game.runeEquip.length;i++){
+				for(let j=0;j<game.runes.length;j++){
+					let k = game.runeEquip[i];
+					let l = game.runes[j];
+					if(getRuneQuality(k).lt(getRuneQuality(l))){
+						game.runeEquip[i]=l;game.runes[j]=k;b=1;break;
+					}
+				}
+			}
+			if(currentTab=='runes'&&b)updateRuneStats();
+			if(currentTab=='runes'&&b)tabs.runes.targets=[],tabs.runes.updateData(),tabs.runes.focusRune();
+		},
     },
 }
 
