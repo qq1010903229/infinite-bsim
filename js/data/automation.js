@@ -13,6 +13,7 @@ let chargerUpgrades = {
         effectAmount: (x) => 38000 / (19 + D(x).toNumber()),
         effectText: ["{0}px", "average charge distance"],
         effectPrecision: 0,
+        maxAmount: 171,
         costAmount: (x) => D.add(9, x).pow(x).mul(100),
     },
     maxHeight: {
@@ -26,13 +27,13 @@ let chargerUpgrades = {
         effectAmount: (x) => D.mul(0.05, x),
         effectText: ["+{0}×", "Charge/charge in charger"],
         effectPrecision: 2,
-        costAmount: (x) => D.add(9, x).pow(x).mul(25000),
+        costAmount: (x) => game.unlocks.atm18?D.pow(3, x).mul(10):D.add(9, x).pow(x).mul(25000),
     },
     upgBonus: {
         effectAmount: (x) => D.mul(0.02, x),
         effectText: ["+{0}×", "Charge/automator upgrades"],
         effectPrecision: 2,
-        costAmount: (x) => D.add(9, x).mul(2).pow(x).mul(5e8),
+        costAmount: (x) => game.unlocks.atm18?D.pow(3, x).mul(10):D.add(9, x).mul(2).pow(x).mul(5e8),
     },
 }
 
@@ -196,7 +197,7 @@ let automators = {
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1)
             .mul(game.automators.scrap.tier ?? 1),
         fire: function(x){
-			let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, D(game.automators.scrap.tier ?? 1).sub(1))).mul(game.unlocks.col5?D(game.collapsed).div(10):1)
+			let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, D(game.automators.scrap.tier ?? 1).sub(1))).mul(game.unlocks.col5?D(game.collapsed).div(game.unlocks.col23?1:10).add(1).pow(game.unlocks.col23?2:1):1).mul(game.unlocks.col25?D(game.scollapsed).add(game.unlocks.col29?1:0).pow(3).div(game.unlocks.col29?1:game.unlocks.col26?1e3:1e4).add(game.unlocks.col29?0:1):1)
 		  .mul(game.unlocks.sig24?(temp.addSigilEffect1 ?? 1):1)
 			let cost = getRuneCost(D(game.automators.scrap.tier ?? 1).sub(1));
 			let count = game.gems.div(cost).floor().min(x)
@@ -352,7 +353,7 @@ let automators = {
 					parent.tier.button.disabled = maxtier >= 29 || D.lt(game.charge, tierCost);
 					parent.tier.cost.textContent = maxtier >= 29 ? "Maxed out" : "−" + format(tierCost) + " Charge";
 				}else{
-					let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, D(game.automators.scrap.tier ?? 1).sub(1))).mul(game.unlocks.col5?D(game.collapsed).div(10):1)
+					let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, D(game.automators.scrap.tier ?? 1).sub(1))).mul(game.unlocks.col5?D(game.collapsed).div(game.unlocks.col23?1:10).add(1).pow(game.unlocks.col23?2:1):1).mul(game.unlocks.col25?D(game.scollapsed).add(game.unlocks.col29?1:0).pow(3).div(game.unlocks.col29?1:game.unlocks.col26?1e3:1e4).add(game.unlocks.col29?0:1):1)
 		  .mul(game.unlocks.sig24?(temp.addSigilEffect1 ?? 1):1).mul(automators.scrap.speed(game.automators.scrap.active));
 					let cost = getRuneCost(D(game.automators.scrap.tier ?? 1).sub(1)).mul(automators.scrap.speed(game.automators.scrap.active));
 					this.details.textContent = "-"+format(cost)+" Gems/s, +"+format(gain)+" Glyphs/s, ×" + format(D(game.automators.scrap.tier ?? 1)) + " consumption";
@@ -368,7 +369,7 @@ let automators = {
         speedPrecision: 0,
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
         fire: function(x){
-			x = x.toNumber();
+			x = x.min(1000).toNumber();
 			if(game.unlocks.mle3)x=1;
 			for(let i=0;i<x;i++){
 				for(let j in milestones.global)clickGlobalMilestone(j);
@@ -626,23 +627,56 @@ let automators = {
         title: "Rune Autoequipper",
         requires: "atm14",
         levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(2, x)).mul(1e200),
-        speed: (x) => D.add(x, 1).div(10000).mul(getAutoSpeed()),
-        speedPrecision: 1,
+        speed: (x) => D.add(x, 1).div(100000).mul(getAutoSpeed()).min(1),
+        speedPrecision: 2,
         consumption: (x) => D.add(x, 1).add(1),
         fire(x){
-			let b=0;
-			for(let i=0;i<game.runeEquip.length;i++){
-				for(let j=0;j<game.runes.length;j++){
-					let k = game.runeEquip[i];
-					let l = game.runes[j];
-					if(getRuneQuality(k).lt(getRuneQuality(l))){
-						game.runeEquip[i]=l;game.runes[j]=k;b=1;break;
-					}
-				}
+			while(game.runeEquip.length>0){
+				game.runes.push(game.runeEquip.pop());
 			}
-			if(currentTab=='runes'&&b)updateRuneStats();
-			if(currentTab=='runes'&&b)tabs.runes.targets=[],tabs.runes.updateData(),tabs.runes.focusRune();
+			game.runes.sort(function(a,b){return getRuneQuality(a).cmp(getRuneQuality(b));});
+			while(game.runes.length>0 && game.runeEquip.length<temp.maxRuneEquip){
+				game.runeEquip.push(game.runes.pop());
+			}
+			game.runes.reverse();
+			updateRuneStats();
+			if(currentTab=='runes')tabs.runes.targets=[],tabs.runes.updateData(),tabs.runes.focusRune();
 		},
+    },
+    token: {
+        title: "Token Upgrades Automator",
+        requires: "atm15",
+        levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(2, x)).mul('1e300'),
+        speed: (x) => D.add(x, 1).div(100000).mul(getAutoSpeed()),
+        speedPrecision: 2,
+        consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
+        fire(x){
+			for(let i in tokenUpgrades)for(let j in tokenUpgrades[i])buyTokenUpgrade(i,j);
+		},
+    },
+    autoauto: {
+        title: "Automator Automator",
+        requires: "atm16",
+        levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(2, x)).mul('1e400'),
+        speed: (x) => D.add(x, 1).div(100000).mul(getAutoSpeed()),
+        speedPrecision: 2,
+        consumption: (x) => D.add(x, 10).pow(D(x).div(2)).add(1),
+        fire(x){
+			game.chargerUpg.value=D.max(game.chargerUpg.value,game.charge.div(10).max(1).logBase(3).add(1).floor());
+			if(game.unlocks.atm18)game.chargerUpg.fillBonus=D.max(game.chargerUpg.fillBonus,game.charge.div(10).max(1).logBase(3).add(1).floor());
+			if(game.unlocks.atm18)game.chargerUpg.upgBonus=D.max(game.chargerUpg.upgBonus,game.charge.div(10).max(1).logBase(3).add(1).floor());
+			for(let i in chargerUpgrades)buyChargerUpgrade(i);
+			for(let i in automators)upgradeAutomator(i);
+		},
+    },
+    super_reset2: {
+        title: "Super^2-Button Automator",
+        requires: "col28",
+        levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(2, x)).mul('1e500'),
+        speed: (x) => D.add(x, 1).div(10000).mul(getAutoSpeed()),
+        speedPrecision: 1,
+        consumption: (x) => D.add(x, 10).pow(D(x).div(2)).add(1),
+        fire: (x) => doSuperResetAuto2(0,x),
     },
 }
 
@@ -732,7 +766,9 @@ function getChargeValue(item) {
         .mul(D.mul(temp.chargerUpgEffects.fillBonus, game.charges.length).add(1))
         .mul(D.mul(temp.chargerUpgEffects.upgBonus, temp.totalAutomatorUpgs).add(1))
         .mul(D.add(temp.runeStats.charge ?? 0, 1));
-	if(game.unlocks.col6)gain = gain.mul(D(game.collapsed).div(100).add(1));
+	if(game.unlocks.col6)gain = gain.mul(D(game.collapsed).div(game.unlocks.col23?1:100).add(1).pow(game.unlocks.col23?2:1));
+	if(game.unlocks.sig26)gain = gain.mul(temp.addSigilEffect1 ?? 1);
+		gain = gain.mul(game.unlocks.col25?D(game.scollapsed).add(game.unlocks.col29?1:0).pow(3).div(game.unlocks.col29?1:game.unlocks.col26?1e3:1e4).add(game.unlocks.col29?0:1):1);
          if (item.type == "big") gain = D.mul(gain, 5);
     else if (item.type == "wide") gain = D.mul(gain, 15);
     return gain;
@@ -744,7 +780,7 @@ function buyChargerUpgrade(id) {
 	if(D(level).gte(data.maxAmount))return;
     let cost = data.costAmount(level);
     if (D.gte(game.charge, cost)) {
-        game.charge = D.sub(game.charge, cost);
+        if(!game.unlocks.atm17)game.charge = D.sub(game.charge, cost);
         game.chargerUpg[id] = D.add(level, 1);
         temp.chargerUpgEffects[id] = data.effectAmount(game.chargerUpg[id]);
     }
@@ -755,7 +791,7 @@ function upgradeAutomator(id) {
     let level = game.automators[id]?.level ?? 0;
     let cost = data.levelCost(level);
     if (D.gte(game.charge, cost)) {
-        game.charge = D.sub(game.charge, cost);
+        if(!game.unlocks.atm17)game.charge = D.sub(game.charge, cost);
         if (!game.automators[id]) game.automators[id] = {};
         game.automators[id].level = D.add(level, 1);
         if (D.gte(game.automators[id].active ?? -1, level)) {
@@ -770,5 +806,6 @@ function getAutoSpeed(){
 	if(game.unlocks.col9)gain = gain.mul(100);
 	else if(game.unlocks.col2)gain = gain.mul(D(game.collapsed).pow(0.75).add(1).min(100));
 	if(game.unlocks.col19)gain = gain.mul(D(game.scollapsed).pow(0.75).add(1).min(100));
+	if(game.unlocks.tok12)gain = gain.mul(temp.tokenUpgEffects.ext2?.autoSpeed ?? 1);
 	return gain;
 }

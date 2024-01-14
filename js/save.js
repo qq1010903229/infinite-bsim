@@ -29,6 +29,7 @@ function getStartGame() {
 
         collapsed: D(0),
         scollapsed: D(0),
+        scollapsed2: [D(0)],
 		
         options: {
             tickRate: 10,
@@ -51,6 +52,7 @@ function getStartGame() {
         currentTab: "buttons",
         
 		super_ladder: [],
+		super_ladder2: [[]],
     }
 }
 

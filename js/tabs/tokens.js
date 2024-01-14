@@ -102,6 +102,13 @@ tabs.tokens = {
             container.append(row);
         }
 
+        if (game.unlocks.tok12) {
+            let row = createRow();
+            row.amount.textContent = "Token Extension II";
+            this.data.ext2 = row;
+            container.append(row);
+        }
+
         this.onTick();
     },
     onTick() {
@@ -112,6 +119,7 @@ tabs.tokens = {
         if (this.data.runeUpg) this.updateTokenRow(this.data.runeUpg, "rune");
         if (this.data.runeEff) this.updateTokenRow(this.data.runeEff, "runeEff");
         if (this.data.ext1) this.updateTokenRow(this.data.ext1, "ext1");
+        if (this.data.ext2) this.updateTokenRow(this.data.ext2, "ext2");
     },
     onEnd() {
         this.data = null;

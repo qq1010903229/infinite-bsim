@@ -345,6 +345,13 @@ tabs.runes = {
                 for (let stat in temp.runeStats) {
                     let sdata = runeStats[stat];
                     let effect = temp.runeStats[stat];
+					
+					if(temp.runeStats.gem1 && stat=="gem")continue;
+					if(temp.runeStats.scrap1 && stat=="scrap")continue;
+					if(temp.runeStats.token1 && stat=="token")continue;
+					if(temp.runeStats.charge1 && stat=="charge")continue;
+					if(temp.runeStats.super1 && stat=="super")continue;
+					
                     let line = document.createElement("li");
                     line.textContent = sdata.display.replace("{0}", format(effect, sdata.precision));
 				if(stat == 'money' && game.unlocks.rne6)line.textContent = "×"+format(effect, sdata.precision)+" Money gain/All Buttons gain";

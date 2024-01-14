@@ -85,7 +85,7 @@ tabs.sigils = {
             ctn.amount.textContent = "×" + format(game.sigils[b]);
         }
         
-        while (this.data.details.items.length < (game.unlocks.sig24?5:game.unlocks.sig22?3:game.unlocks.sig11?2:game.unlocks.sig10?1:game.sigils.length)) {
+        while (this.data.details.items.length < (game.unlocks.sig26?6:game.unlocks.sig24?5:game.unlocks.sig22?3:game.unlocks.sig11?2:game.unlocks.sig10?1:game.sigils.length)) {
             let ctn = document.createElement("li");
             this.data.details.descInfo.append(ctn);
             this.data.details.items.push(ctn);
@@ -93,16 +93,19 @@ tabs.sigils = {
         }
 
 		if (game.unlocks.sig11){
-			this.data.details.items[1].textContent = "×" + format(temp.addSigilEffect1 ?? 1, 2) + " all token gains";
+			this.data.details.items[game.unlocks.sig24?3:1].textContent = "×" + format(temp.addSigilEffect1 ?? 1, 2) + " all Token gains";
         }
 		if (game.unlocks.sig22){
-			this.data.details.items[2].textContent = "×" + format(temp.addSigilEffect2 ?? 1, 2) + " all super button gains";
+			this.data.details.items[game.unlocks.sig26?5:game.unlocks.sig24?4:2].textContent = "×" + format(temp.addSigilEffect2 ?? 1, 2) + " all Super Button gains";
         }
 		if (game.unlocks.sig24){
-			this.data.details.items[3].textContent = "×" + format(temp.addSigilEffect1 ?? 1, 2) + " all Gem gains";
+			this.data.details.items[1].textContent = "×" + format(temp.addSigilEffect1 ?? 1, 2) + " all Gem gains";
         }
 		if (game.unlocks.sig24){
-			this.data.details.items[4].textContent = "×" + format(temp.addSigilEffect1 ?? 1, 2) + " all Glyph gains";
+			this.data.details.items[2].textContent = "×" + format(temp.addSigilEffect1 ?? 1, 2) + " all Glyph gains";
+        }
+		if (game.unlocks.sig26){
+			this.data.details.items[4].textContent = "×" + format(temp.addSigilEffect1 ?? 1, 2) + " all Charge gains";
         }
 		if (game.unlocks.sig10){
 			this.data.details.items[0].textContent = "×" + format(temp.sigilEffects[0], 2) + " all button gains";
