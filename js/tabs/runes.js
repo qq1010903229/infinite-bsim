@@ -191,7 +191,7 @@ tabs.runes = {
         this.data.money.eqUpgBtn.cost.textContent = "−" + format(eqUpgCost) + " Glyphs";
         this.data.money.eqUpgBtn.disabled = D.lt(game.scraps, eqUpgCost);
 
-        while (this.data.gem.items.length < 8) {
+        while (this.data.gem.items.length < (game.unlocks.rne25?1:8)) {
             let button = document.createElement("button");
             button.classList.add("pushy-button");
             button.tabIndex = -1;
@@ -214,14 +214,36 @@ tabs.runes = {
             button.cost = cost;
         }
         
-        for (let b = 0; b < 8; b++) {
+        if(!game.unlocks.rne25)for (let b = 0; b < 8; b++) {
             let button = this.data.gem.items[b];
             button.tier = D.add(temp.runeTierShift, b);
             button.gain.textContent = "+Tier " + format(D.add(1, button.tier)) + " Rune";
             let cost = getRuneCost(button.tier);
             button.cost.innerText = "−" + format(cost) + " Gems";
             button.disabled = D.lt(game.gems, cost);
-        }
+        }else{
+			let button = this.data.gem.items[0];
+			button.tier = D(0);
+            button.gain.textContent = "+Tier " + format(D.add(getHighestRuneTier(),1)) + " Rune";
+            let cost = getRuneCost(D.add(getHighestRuneTier(),1));
+            button.cost.innerText = "Next Tier at " + format(cost) + " Gems";
+			 button.disabled = false;
+			
+			if(!this.data.gem.mlt){
+				this.data.gem.append("Current Tier Multiplier:");
+				this.data.gem.mlt = document.createElement("div");
+				this.data.gem.mlt.style.fontWeight = "bold";
+				this.data.gem.append(this.data.gem.mlt);
+			}
+			if(!this.data.gem.mlt2){
+				this.data.gem.append("Next Tier Multiplier:");
+				this.data.gem.mlt2 = document.createElement("div");
+				this.data.gem.mlt2.style.fontWeight = "bold";
+				this.data.gem.append(this.data.gem.mlt2);
+			}
+			this.data.gem.mlt.textContent = format(getRuneQualityBase(getHighestRuneTier()));
+			this.data.gem.mlt2.textContent = format(getRuneQualityBase(D.add(getHighestRuneTier(),1)));
+		}
     },
     setRuneButton(button, rune, index) {
         button.index = index;
@@ -402,6 +424,25 @@ tabs.runes = {
             }
             
             this.data.details.descInfo.textContent = "Rune equipped effects:";
+			if(game.unlocks.rne25){
+				this.data.details.descInfo.textContent = "Rune effect base multipliers:";
+                let line = document.createElement("li");
+                line.textContent = "Tier Multiplier: "+format(getRuneQualityBase(rune.tier));
+                this.data.details.descInfo.append(line);
+				line = document.createElement("li");
+                line.textContent = "Rarity Multiplier: "+format(getRuneQualityRarity(rune.tier, rune.rarity));
+                this.data.details.descInfo.append(line);
+				line = document.createElement("li");
+                line.textContent = "Level Multiplier: "+format(getRuneQualityLevel(rune.tier, rune.level));
+                this.data.details.descInfo.append(line);
+				line = document.createElement("li");
+                line.textContent = "Upgrade Multiplier: "+format(temp.tokenUpgEffects.rune?.upgEff2 ?? 1);
+                this.data.details.descInfo.append(line);
+				line = document.createElement("li");
+                line.textContent = "Total Multiplier: "+format(getRuneQuality(rune));
+                this.data.details.descInfo.append(line);
+                this.data.details.descInfo.append("Rune equipped effects:");
+			}
             for (let stat of rune.stats ?? []) {
                 let sdata = runeStats[stat];
                 let effect = sdata.get(getRuneQuality(rune));

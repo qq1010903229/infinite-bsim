@@ -63,35 +63,42 @@ let tokenUpgrades = {
             costAmount: (x) => D.pow(4, x).mul(game.unlocks.tok9?1:350),
         },
         super: {
-            requires: ["atm1"],
-            effectAmount: (x) => D.pow(2, x),
+            requires: ["tok6"],
+            effectAmount: (x) => D.pow(2, D(x).mul(D.mul(0.1, game.tokenUpg.ext2?.super_effective ?? 0).add(1))),
             effectText: ["×{0}", "all Super Button gains"],
             effectPrecision: 0,
             costAmount: (x) => D.pow(4, D.max(x,D.max(game.unlocks.tok9?1:D.pow(x,3).div(200),game.unlocks.tok11?1:D.pow(x,2).div(10)))).mul(1e100),
+        },
+        super2: {
+            requires: ["tok12"],
+            effectAmount: (x) => D.pow(2, x),
+            effectText: ["×{0}", "all Super^2 Button gains"],
+            effectPrecision: 0,
+            costAmount: (x) => D.pow(2, D.mul(x, 10).add(1024)),
         },
     },
     rune: {
         genEff: {
             effectAmount: (x) => D.mul(0.1, x).add(1),
             effectText: ["^{0}", "effective gem generators"],
-            maxAmount: 990,
+            maxAmount: 1490,
             effectPrecision: 1,
             costAmount: (x) => D.pow(3, x).mul(game.unlocks.tok9?1:1000),
         },
         upgEff: {
             effectAmount: (x) => D.mul(0.1, x).add(1),
             effectText: ["×{0}", "stronger gem token doubler"],
-            maxAmount: 60,
+            maxAmount: 70,
             effectPrecision: 1,
-            costAmount: (x) => D.pow(D(x).gte(40)?600:3, x).mul(game.unlocks.tok9?1:1000),
+            costAmount: (x) => D.pow(D(x).gte(60)?2e7:D(x).gte(40)?600:3, x).mul(game.unlocks.tok9?1:1000),
         },
         upgEff1: {
             requires: ["tok6"],
             effectAmount: (x) => D.mul(0.1, x).add(1),
             effectText: ["×{0}", "effective generator upgrades"],
-            maxAmount: 60,
+            maxAmount: 70,
             effectPrecision: 1,
-            costAmount: (x) => D.pow(D(x).gte(40)?100:3, x).mul(1e40),
+            costAmount: (x) => D.pow(D(x).gte(60)?2e7:D(x).gte(40)?100:3, x).mul(1e40),
         },
         upgEff2: {
             requires: ["tok6"],
@@ -101,16 +108,24 @@ let tokenUpgrades = {
 				return D.pow(100, y).mul(x-y*99+1);
 			},
             effectText: ["×{0}", "stronger runes"],
-            maxAmount: 396,
+            maxAmount: 693,
             effectPrecision: 0,
             costAmount: (x) => D.pow(5, x).mul(game.unlocks.tok9?1e40:1e50),
         },
         upgEff3: {
             effectAmount: (x) => D.mul(0.1, x).add(1),
             effectText: ["×{0}", "stronger glyph token doubler"],
-            maxAmount: 20,
+            maxAmount: 25,
             effectPrecision: 1,
-            costAmount: (x) => D.pow(D(x).gte(15)?10:3, x).mul(1e100),
+            costAmount: (x) => D.pow(D(x).gte(20)?1e19:D(x).gte(15)?10:3, x).mul(1e100),
+        },
+        rarity: {
+            requires: ["tok12"],
+            effectAmount: (x) => D.mul(0.1, x),
+            effectText: ["+{0}", "additional rune rarity"],
+            maxAmount: 30,
+            effectPrecision: 1,
+            costAmount: (x) => D.pow(2, D.pow(x, 2).add(1024)),
         },
     },
     runeEff: {
@@ -150,7 +165,7 @@ let tokenUpgrades = {
 				return D.pow(100, y).mul(x-y*99+1);
 			},
             effectText: ["×{0}", "stronger above effects"],
-            maxAmount: 396,
+            maxAmount: 594,
             effectPrecision: 0,
             costAmount: (x) => D.pow(5, x).mul(game.unlocks.tok11?1e80:game.unlocks.tok9?1e100:1e110),
         },
@@ -187,19 +202,19 @@ let tokenUpgrades = {
             requires: ["tok6"],
             effectAmount: (x) => D.mul(0.01, x).add(1),
             effectText: ["^{0}", "better sigil generator"],
-            maxAmount: 200,
+            maxAmount: 400,
             effectPrecision: 2,
             costAmount: (x) => D.pow(10, x).mul(1e120),
         },
+        multi: {
+            requires: ["tok12"],
+            effectAmount: (x) => D.mul(0.1, x).add(1),
+            effectText: ["^{0}", "multi effect"],
+            effectPrecision: 1,
+            costAmount: (x) => D.pow(10, x).mul('1e450'),
+        },
     },
     ext2: {
-        /* superTierFactor2: {
-            effectAmount: (x) => D.mul(0.05, x),
-            effectText: ["^{0}", "super^2 button tier to Token multi"],
-            maxAmount: 140,
-            effectPrecision: 2,
-            costAmount: (x) => D.add(7, x).pow(x).mul(1e300),
-        }, */
         autoSpeed: {
             effectAmount(x){
 				x = D(x).toNumber();
@@ -210,6 +225,19 @@ let tokenUpgrades = {
             maxAmount: 396,
             effectPrecision: 0,
             costAmount: (x) => D.pow(10, x).mul(1e300),
+        },
+        sigil: {
+            effectAmount: (x) => D.mul(0.01, x).add(1),
+            effectText: ["^{0}", "all sigil effects"],
+            effectPrecision: 2,
+            maxAmount: 200,
+            costAmount: (x) => D.pow(2, D(x).pow(1.25)).mul('1e330'),
+        },
+        super_effective: {
+            effectAmount: (x) => D.mul(0.1, x).add(1),
+            effectText: ["×{0}", "stronger super button token doubler"],
+            effectPrecision: 1,
+            costAmount: (x) => D.pow(10, x).mul('1e330'),
         },
     },
 }

@@ -104,7 +104,7 @@ tabs.colboost = {
         if(game.unlocks.col27)for (let a = 0; a < game.super_ladder2[0].length; a++) {
             let data = game.super_ladder2[0][a];
             let row = this.data.rows[a];
-            let name = D.lt(data.tier, tierNames.length) ? "Super^2-"+tierNames[D(data.tier).toNumber()] : "Super-Reset^2 "+D(data.tier).toNumber();
+            let name = D.lt(data.tier, tierNames.length) ? "Super^2-"+tierNames[D(data.tier).toNumber()] : "Super^2-Reset "+D(data.tier).toNumber();
             row.style.setProperty("--background", tierColors[D(data.tier).toNumber()%tierColors.length]);
             row.amount.textContent = format(data.amount);
             row.name.textContent = name;
@@ -193,7 +193,9 @@ tabs.colboost = {
 				tempHTML+='<li>Next at 175 Collapsed Super Layers</li>';
 			}
 			
-			if(game.unlocks.col29){
+			if(game.unlocks.col31){
+				tempHTML+='<li>-9 uncollapsed super layers</li>';
+			}else if(game.unlocks.col29){
 				tempHTML+='<li>-5 uncollapsed super layers</li>';
 			}else if(game.unlocks.col27){
 				tempHTML+='<li>-3 uncollapsed super layers</li>';

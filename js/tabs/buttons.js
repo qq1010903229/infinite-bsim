@@ -233,6 +233,7 @@ tabs.buttons = {
 				row.multi = multi;
 				row.rate.textContent = "×" + format(row.multi);
 
+				if(game.unlocks.col31)row.rate.textContent = format(game.scollapsed) + " Collapsed Super Layers";
 				for (let b = 0; b < 8; b++) {
 					let button = row.items[b];
                 button.row = data.tier;

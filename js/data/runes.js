@@ -43,7 +43,10 @@ let runeStats = {
 			else if(D(q).gte(8000) && !game.unlocks.rne20)q = D(q).div(80).log10().pow(6).mul(125);
 			if(D(q).gte(2000) && !game.unlocks.rne23)q = D(q).div(20).log10().pow(4).mul(125);
 			else if(D(q).gte(4000) && !game.unlocks.rne24)q = D(q).div(40).log10().pow(5).mul(125);
-			else if(D(q).gte(8000))q = D(q).div(80).log10().pow(5).mul(250);
+			else if(D(q).gte(8000) && !game.unlocks.rne26)q = D(q).div(80).log10().pow(5).mul(250);
+			else if(D(q).gte(32000) && !game.unlocks.rne27)q = D(q).div(320).log10().pow(5).mul(1000);
+			else if(D(q).gte(64000) && !game.unlocks.rne28)q = D(q).div(640).log10().pow(6).mul(1000);
+			else q = D(q).div(640).log10().pow(6).mul(1000).max(q.pow(0.425));
 			return D.pow(1.01, q);
 		},
         precision: 2,
@@ -113,6 +116,9 @@ let runeStats = {
     super1: {
         display: "×{0} Super Button gain",
         get(q){
+			if(game.unlocks.rne28)return q;
+			if(game.unlocks.rne27)return D.pow(q, 0.5);
+			if(game.unlocks.rne26)return D.pow(q, 0.25);
 			if(game.unlocks.rne24)return D.pow(q, 0.1);
 			return D(q).mul(game.unlocks.rne23?(temp.tokenUpgEffects.runeEff?.effect ?? 1):1).pow(game.unlocks.rne23?0.03:0.025);
 		},
@@ -143,7 +149,7 @@ function getEqUpgCost(tier) {
 }
 function getInvUpgCost(tier) {
     tier = D(tier ?? 0).pow(2).add(1);
-	if(tier.gte(25))tier = D.pow(10, tier);
+	if(tier.gte(25))tier = tier.mul(tier).div(6.25);
     return D.pow(1e30, tier);
 }
 
@@ -200,7 +206,8 @@ function buyInvUpg() {
 function buyRune(tier) {
     let cost = getRuneCost(tier);
     if (D.gte(game.gems, cost) && game.runes.length + game.runeEquip.length < temp.maxRunes) {
-        game.gems = D.sub(game.gems, cost);
+        if(!game.unlocks.rne25)game.gems = D.sub(game.gems, cost);
+		else tier = getHighestRuneTier();
         let rune = generateRune(tier);
         game.runes.push(rune);
         game.stats.runeBought++;
@@ -218,17 +225,33 @@ function generateRune(tier) {
 	if (game.unlocks.rne22) stats = ['money','gem1','scrap1','token1','charge1','super1'];
     return {
         tier,
-        rarity: D.div(1, 1 - Math.random()).ln().floor(),
+        rarity: D.div(1, 1 - Math.random()).ln().add(temp.tokenUpgEffects.rune?.rarity ?? 0).floor(),
         level: D(0),
         stats,
     }
 }
 
+function getRuneQualityBase(tier) {
+	if(D(tier).gte(1999))return D(tier).add(1).pow(5).div(10000000-D(tier).mul(1000).min(9999000).toNumber());
+	if(D(tier).gte(799))return D(tier).add(1).pow(4).div(10000);
+	if(D(tier).gte(599))return D(tier).add(1).pow(4).div(50000);
+	if(D(tier).gte(399))return D(tier).add(1).pow(4).div(80000);
+	return D(tier).add(1).pow(2);
+}
+
+function getRuneQualityLevel(tier, level) {
+	if(D(tier).gte(599))return D.add(level, 1).mul(D.pow(1.08,D.add(level, 1).pow(1.3)).min(100)).add(1).floor();
+	return D.add(level, 1);
+}
+
+function getRuneQualityRarity(tier, rarity) {
+	if(D(tier).gte(799))return D(rarity).add(1).mul(D.pow(1.015,D.add(rarity, 1).pow(1.5)).min(100)).floor();
+	return D(rarity).add(2).add(D(rarity).pow(2).div(10));
+}
+
 function getRuneQuality(rune) {
-	if(D(rune.tier).gte(1999))return D(rune.tier).add(1).pow(5).div(10000000-D(rune.tier).mul(1000).min(9999000).toNumber()).mul(D(rune.rarity).add(1).mul(D.pow(1.015,D.add(rune.rarity, 1).pow(1.5)).min(100)).floor()).mul(D.add(rune.level, 1).mul(D.pow(1.08,D.add(rune.level, 1).pow(1.3)).min(100)).add(1).floor()).mul(temp.tokenUpgEffects.rune?.upgEff2 ?? 1);
-	if(D(rune.tier).gte(799))return D(rune.tier).add(1).pow(4).div(10000).mul(D(rune.rarity).add(1).mul(D.pow(1.015,D.add(rune.rarity, 1).pow(1.5)).min(100)).floor()).mul(D.add(rune.level, 1).mul(D.pow(1.08,D.add(rune.level, 1).pow(1.3)).min(100)).add(1).floor()).mul(temp.tokenUpgEffects.rune?.upgEff2 ?? 1);
-	if(D(rune.tier).gte(599))return D(rune.tier).add(1).pow(4).div(50000).mul(D(rune.rarity).add(2).add(D(rune.rarity).pow(2).div(10))).mul(D.add(rune.level, 1).mul(D.pow(1.08,D.add(rune.level, 1).pow(1.3)).min(100)).add(1).floor()).mul(temp.tokenUpgEffects.rune?.upgEff2 ?? 1);
-	if(D(rune.tier).gte(399))return D(rune.tier).add(1).pow(4).div(80000).mul(D(rune.rarity).add(2).add(D(rune.rarity).pow(2).div(10))).mul(D.add(rune.level, 1)).mul(temp.tokenUpgEffects.rune?.upgEff2 ?? 1);
+	if(D(rune.tier).gte(399))return getRuneQualityBase(rune.tier).mul(getRuneQualityRarity(rune.tier, rune.rarity)).mul(getRuneQualityLevel(rune.tier, rune.level)).mul(temp.tokenUpgEffects.rune?.upgEff2 ?? 1);
+	
 	if(game.unlocks.rne14)return D.add(rune.tier, rune.rarity).add(10).pow(2).max(D(rune.tier).add(1).pow(2).mul(D(rune.rarity).add(1))).mul(D.add(rune.level, 1)).mul(temp.tokenUpgEffects.rune?.upgEff2 ?? 1);
 	if(game.unlocks.rne13)return D.add(rune.tier, rune.rarity).add(10).pow(2).max(D(rune.tier).add(1).pow(2).mul(D(rune.rarity).add(1))).mul(D.add(rune.level, 2)).div(2).mul(temp.tokenUpgEffects.rune?.upgEff2 ?? 1);
 	if(game.unlocks.rne12)return D.add(rune.tier, rune.rarity).add(10).pow(2).max(D(rune.tier).add(1).pow(2).mul(D(rune.rarity).add(1))).mul(D.add(rune.level, 1).sqrt()).mul(temp.tokenUpgEffects.rune?.upgEff2 ?? 1);

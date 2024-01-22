@@ -24,7 +24,7 @@ let temp = {
 }
 
 function updateTemp() {
-    temp.moneySpeed = D.add(getRowAmount(0), game.unlocks["btn1"] ? 1 : 0)
+    temp.moneySpeed = D.add(getRowAmount(0), game.unlocks["btn1"] ? 1 : 0).pow(temp.tokenUpgEffects.ext1?.multi ?? 1)
         .mul(temp.runeStats.money ?? 1)
         .mul(temp.milestoneMultis.money ?? 1)
         .mul(temp.tokenUpgEffects.double.money);
@@ -118,8 +118,9 @@ function updateSigilEffects() {
     temp.sigilPoints = D(0);
     temp.sigilEffects = {};
     for (let a = game.sigils.length - 1; a >= 0; a--) {
-		if (game.unlocks.sig30)temp.sigilEffects[a] = multi = D(game.sigils[a]).mul(a * a).add(1).pow(5).mul(multi);
-        else if (game.unlocks.sig29)temp.sigilEffects[a] = multi = D(game.sigils[a]).mul(a * a).add(1).pow(5).mul(multi);
+		if (game.unlocks.sig31)temp.sigilEffects[a] = multi = D(game.sigils[a]).mul(a * a).add(1).pow(10).pow(temp.tokenUpgEffects?.ext2?.sigil ?? 1).mul(multi);
+        else if (game.unlocks.sig30)temp.sigilEffects[a] = multi = D(game.sigils[a]).mul(a * a).add(1).pow(7.5).pow(temp.tokenUpgEffects?.ext2?.sigil ?? 1).mul(multi);
+        else if (game.unlocks.sig29)temp.sigilEffects[a] = multi = D(game.sigils[a]).mul(a * a).add(1).pow(5).pow(temp.tokenUpgEffects?.ext2?.sigil ?? 1).mul(multi);
         else if (game.unlocks.sig25)temp.sigilEffects[a] = multi = D(game.sigils[a]).mul(a * a).add(1).pow(3).mul(multi);
         else if (game.unlocks.sig24)temp.sigilEffects[a] = multi = D(game.sigils[a]).mul(a * a).add(1).pow(2.5).mul(multi);
         else if (game.unlocks.sig23)temp.sigilEffects[a] = multi = D(game.sigils[a]).mul(a * a).add(1).pow(2).mul(multi);
@@ -134,7 +135,8 @@ function updateSigilEffects() {
 	else if (game.unlocks.sig24)temp.addSigilEffect1 = temp.sigilEffects[0].add(10).log10();
 	else if (game.unlocks.sig23)temp.addSigilEffect1 = temp.sigilEffects[0].add(10).log10().pow(0.75);
 	else if (game.unlocks.sig11)temp.addSigilEffect1 = temp.sigilEffects[0].add(10).log10().sqrt();
-	if (game.unlocks.sig29)temp.addSigilEffect2 = D.pow(10,temp.sigilEffects[0].add(10).log10().pow(0.2));
+	if (game.unlocks.sig31)temp.addSigilEffect2 = D.pow(10,temp.sigilEffects[0].add(10).log10().pow(0.25));
+	else if (game.unlocks.sig29)temp.addSigilEffect2 = D.pow(10,temp.sigilEffects[0].add(10).log10().pow(0.2));
 	else if (game.unlocks.sig28)temp.addSigilEffect2 = temp.sigilEffects[0].add(10).log10().pow(2);
 	else if (game.unlocks.sig27)temp.addSigilEffect2 = temp.sigilEffects[0].add(10).log10();
 	else if (game.unlocks.sig26)temp.addSigilEffect2 = temp.sigilEffects[0].add(10).log10().pow(0.8);
@@ -143,6 +145,9 @@ function updateSigilEffects() {
 	else if (game.unlocks.sig23)temp.addSigilEffect2 = temp.sigilEffects[0].add(10).log10().sqrt();
 	else if (game.unlocks.sig22)temp.addSigilEffect2 = temp.sigilEffects[0].add(10).log10().add(10).log10().pow(2);
 		
+	temp.addSigilEffect1 = temp.addSigilEffect1.pow(temp.tokenUpgEffects?.ext2?.sigil ?? 1);
+	temp.addSigilEffect2 = temp.addSigilEffect2.pow(temp.tokenUpgEffects?.ext2?.sigil ?? 1);
+	
 	if (game.unlocks.sig10) {
 		for (let a = game.sigils.length - 1; a >= 1; a--) {
 			temp.sigilEffects[a] = temp.sigilEffects[0];

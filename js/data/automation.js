@@ -183,7 +183,7 @@ let automators = {
         title: "Sigil Automator",
         requires: "atm5a",
         levelCost: (x) => D.pow(x, D.div(x, 10).add(0.9).pow(2)).add(1).mul(D.pow(10, x)).mul(100000),
-        speed: (x) => D.add(x, 1).mul(game.unlocks.atm13?D.add(x, 1).pow(1.5):1).mul(getAutoSpeed()).mul(game.unlocks.col4?D(game.collapsed).div(10).pow(game.unlocks.col14?15:game.unlocks.col13?12:game.unlocks.col12?10:game.unlocks.col11?8:game.unlocks.col10?7:game.unlocks.col9?6:game.unlocks.col7?5:game.unlocks.col6?4:game.unlocks.col5?3:2).add(1):1),
+        speed: (x) => D.add(x, 1).mul(game.unlocks.atm13?D.add(x, 1).pow(1.5):1).mul(getAutoSpeed()).mul(game.unlocks.col4?D(game.collapsed).div(10).pow(game.unlocks.col14?15:game.unlocks.col13?12:game.unlocks.col12?10:game.unlocks.col11?8:game.unlocks.col10?7:game.unlocks.col9?6:game.unlocks.col7?5:game.unlocks.col6?4:game.unlocks.col5?3:2).add(1):1).min(1e150),
         speedPrecision: 0,
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
         fire: (x) => forgeSigil(0, x),
@@ -197,12 +197,17 @@ let automators = {
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1)
             .mul(game.automators.scrap.tier ?? 1),
         fire: function(x){
-			let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, D(game.automators.scrap.tier ?? 1).sub(1))).mul(game.unlocks.col5?D(game.collapsed).div(game.unlocks.col23?1:10).add(1).pow(game.unlocks.col23?2:1):1).mul(game.unlocks.col25?D(game.scollapsed).add(game.unlocks.col29?1:0).pow(3).div(game.unlocks.col29?1:game.unlocks.col26?1e3:1e4).add(game.unlocks.col29?0:1):1)
+			let tier1 = game.automators.scrap?.tier ?? 1;
+			if(game.unlocks.rne25){
+				tier1 = getHighestRuneTier();
+			}
+			let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, D(tier1).sub(1))).mul(game.unlocks.col5?D(game.collapsed).div(game.unlocks.col23?1:10).add(1).pow(game.unlocks.col23?2:1):1).mul(game.unlocks.col25?D(game.scollapsed).add(game.unlocks.col29?1:0).pow(3).div(game.unlocks.col29?1:game.unlocks.col26?1e3:1e4).add(game.unlocks.col29?0:1):1)
 		  .mul(game.unlocks.sig24?(temp.addSigilEffect1 ?? 1):1)
-			let cost = getRuneCost(D(game.automators.scrap.tier ?? 1).sub(1));
+			let cost = getRuneCost(D(tier1).sub(1));
 			let count = game.gems.div(cost).floor().min(x)
+			if(game.unlocks.rne25)count = x;
 			game.scraps = D.add(game.scraps,count.mul(gain))
-			game.gems = D.sub(game.gems,count.mul(cost))
+			if(!game.unlocks.rne25)game.gems = D.sub(game.gems,count.mul(cost))
 		},
         configs: {
             tierCost(x){
@@ -296,10 +301,11 @@ let automators = {
 					
                     let title = document.createElement("div");
                     title.textContent = "This automator will buy Common rune of selected tier with 1 effect and immediately scrap it.";
+					if(game.unlocks.rne25)title.textContent = "This automator will buy Common rune of highest available tier with 1 effect and immediately scrap it.";
                     container.append(title);
                     container.nameBox = title;
                 }
-                if(game.unlocks.atm12){
+                if(game.unlocks.atm12 && !game.unlocks.rne25){
                     let container = document.createElement("div");
                     container.classList.add("config-item");
                     parent.append(container);
@@ -325,6 +331,9 @@ let automators = {
                     container.append(input);
                     container.input = input;
                 }
+				if(game.unlocks.rne25){
+					game.automators.scrap.tier = D(1);
+				}
                 if(game.unlocks.atm12){
                     let container = document.createElement("div");
                     container.classList.add("config-item");
@@ -353,10 +362,15 @@ let automators = {
 					parent.tier.button.disabled = maxtier >= 29 || D.lt(game.charge, tierCost);
 					parent.tier.cost.textContent = maxtier >= 29 ? "Maxed out" : "−" + format(tierCost) + " Charge";
 				}else{
-					let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, D(game.automators.scrap.tier ?? 1).sub(1))).mul(game.unlocks.col5?D(game.collapsed).div(game.unlocks.col23?1:10).add(1).pow(game.unlocks.col23?2:1):1).mul(game.unlocks.col25?D(game.scollapsed).add(game.unlocks.col29?1:0).pow(3).div(game.unlocks.col29?1:game.unlocks.col26?1e3:1e4).add(game.unlocks.col29?0:1):1)
+					let tier1 = game.automators.scrap?.tier ?? 1;
+					if(game.unlocks.rne25){
+						tier1 = getHighestRuneTier();
+					}
+					let gain = D(5).mul(temp.tokenUpgEffects.double.scrap).mul(D.add(temp.runeStats.scrap ?? 0, 1)).mul(D.pow(3, D(tier1).sub(1))).mul(game.unlocks.col5?D(game.collapsed).div(game.unlocks.col23?1:10).add(1).pow(game.unlocks.col23?2:1):1).mul(game.unlocks.col25?D(game.scollapsed).add(game.unlocks.col29?1:0).pow(3).div(game.unlocks.col29?1:game.unlocks.col26?1e3:1e4).add(game.unlocks.col29?0:1):1)
 		  .mul(game.unlocks.sig24?(temp.addSigilEffect1 ?? 1):1).mul(automators.scrap.speed(game.automators.scrap.active));
-					let cost = getRuneCost(D(game.automators.scrap.tier ?? 1).sub(1)).mul(automators.scrap.speed(game.automators.scrap.active));
-					this.details.textContent = "-"+format(cost)+" Gems/s, +"+format(gain)+" Glyphs/s, ×" + format(D(game.automators.scrap.tier ?? 1)) + " consumption";
+					let cost = getRuneCost(D(tier1).sub(1)).mul(automators.scrap.speed(game.automators.scrap.active));
+					this.details.textContent = "-"+format(cost)+" Gems/s, +"+format(gain)+" Glyphs/s, ×" + format(D(tier1)) + " consumption";
+					if(game.unlocks.rne25)this.details.textContent = "+"+format(gain)+" Glyphs/s";
 				}
             },
         }
@@ -543,28 +557,34 @@ let automators = {
         speedPrecision: 1,
         consumption: (x) => D.add(x, 1).pow(D.div(x, 10).add(0.9)).add(1),
         fire(x){
-			if (game.runes.length + game.runeEquip.length >= temp.maxRunes)return;
+			if (game.runes.length + game.runeEquip.length >= temp.maxRunes && !game.unlocks.rne25)return;
 			let tier = D(game.automators.rune?.tier ?? 1).sub(1);
+			if(game.unlocks.rne25)tier = getHighestRuneTier();
 			let cost = getRuneCost(tier);
 			let b=1;
 			let level = x.add(1).div(15).logBase(5).min((temp.maxRunes - game.runes.length - game.runeEquip.length - 1)/4).min(game.gems.div(cost).max(1).logBase(5)).max(0).floor().toNumber(); 
+			if(game.unlocks.rne25)level = x.add(1).div(15).logBase(5).min((temp.maxRunes - game.runes.length - game.runeEquip.length - 1)/4).max(0).floor().toNumber(); 
 			x = x.div(D.pow(5,level)).toNumber();
 			cost = cost.mul(D.pow(5,level));
-			while (D.gte(game.gems, cost) && game.runes.length + game.runeEquip.length < temp.maxRunes - level * 4 && x > 0) {
-				game.gems = D.sub(game.gems, cost);
+			while ((D.gte(game.gems, cost) || game.unlocks.rne25) && game.runes.length + game.runeEquip.length < temp.maxRunes - level * 4 && x > 0) {
+				if(!game.unlocks.rne25)game.gems = D.sub(game.gems, cost);
 				let rune = generateRune(tier);
 				rune.level = level;
 				game.runes.push(rune);
-				game.stats.runeBought++;
+				game.stats.runeBought+=Math.pow(5,level);
 				b=1;
 				x--;
 			}
-			if(currentTab=='runes'&&b)updateRuneStats();
+			if(game.unlocks.rne25){
+				for(let i=0;i<game.runes.length;i++)game.runes[i].tier = tier;
+				for(let i=0;i<game.runeEquip.length;i++)game.runeEquip[i].tier = tier;
+			}
+			updateRuneStats();
 			if(currentTab=='runes'&&b)tabs.runes.targets=[],tabs.runes.updateData(),tabs.runes.focusRune();
 		},
         configs: {
             start(parent) {
-                {
+				if(!game.unlocks.rne25){
                     let container = document.createElement("div");
                     container.classList.add("config-item");
                     parent.append(container);
@@ -588,7 +608,18 @@ let automators = {
                     }
                     container.append(input);
                     container.input = input;
-                }
+                }else{
+                    let container = document.createElement("div");
+                    container.classList.add("config-item");
+                    parent.append(container);
+                    parent.factor = container;
+					
+                    let title = document.createElement("div");
+                    title.innerHTML = "This automator will autobuy rune,<br> and tier-up all runes to current max available tier without spending anything.";
+                    container.append(title);
+                    container.nameBox = title;
+					delete game.automators.rune.tier;
+				}
             },
             update(parent) {
             },
