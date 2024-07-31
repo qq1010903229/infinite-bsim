@@ -129,6 +129,8 @@ function updateSigilEffects() {
         temp.sigilPoints = D.pow(2, a).mul(game.sigils[a]).add(temp.sigilPoints);
     }
 	
+	temp.addSigilEffect1 = new Decimal(1);
+	temp.addSigilEffect2 = new Decimal(1);
 	if (game.unlocks.sig27)temp.addSigilEffect1 = temp.sigilEffects[0].add(10).log10().pow(2);
 	else if (game.unlocks.sig26)temp.addSigilEffect1 = temp.sigilEffects[0].add(10).log10().pow(1.5);
 	else if (game.unlocks.sig25)temp.addSigilEffect1 = temp.sigilEffects[0].add(10).log10().pow(1.25);
