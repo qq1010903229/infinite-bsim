@@ -4,7 +4,7 @@ let chargeDir = 0;
 
 let chargerUpgrades = {
     value: {
-        effectAmount: (x) => D.pow(2, x),
+        effectAmount: (x) => D.pow(2, x).max(D.pow(1.5,x).mul(100)),
         effectText: ["×{0}", "all Charge gains"],
         effectPrecision: 0,
         costAmount: (x) => D.pow(3, x).mul(10),
