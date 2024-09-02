@@ -46,7 +46,7 @@ let runeStats = {
 			else if(D(q).gte(8000) && !game.unlocks.rne26)q = D(q).div(80).log10().pow(5).mul(250);
 			else if(D(q).gte(32000) && !game.unlocks.rne27)q = D(q).div(320).log10().pow(5).mul(1000);
 			else if(D(q).gte(64000) && !game.unlocks.rne28)q = D(q).div(640).log10().pow(6).mul(1000);
-			else q = D(q).div(640).log10().pow(6).mul(1000).max(q.pow(0.425));
+			else if(D(q).gte(64000))q = D(q).div(640).log10().pow(6).mul(1000).max(q.pow(0.425));
 			return D.pow(1.01, q);
 		},
         precision: 2,
